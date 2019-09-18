@@ -1,0 +1,48 @@
+{
+  "project_info": {
+    "project_number": "540377479002",
+    "firebase_url": "https://suvasam-23763.firebaseio.com",
+    "project_id": "suvasam-23763",
+    "storage_bucket": "suvasam-23763.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:540377479002:android:504d5dc61411800b",
+        "android_client_info": {
+          "package_name": "com.example.suvasam"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "540377479002-vldk191me3pp53ujh7tsklo1e3h6l8nk.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.example.suvasam",
+            "certificate_hash": "f63932a9d77a611ab461ca4128f6d39829e18883"
+          }
+        },
+        {
+          "client_id": "540377479002-bbkbapumjbc161moksu74eem1maaf655.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDkZvW-aye5MZXA0WlJ20h10l9dYJYHpXo"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "540377479002-bbkbapumjbc161moksu74eem1maaf655.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
