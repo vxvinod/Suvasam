@@ -1,6 +1,7 @@
 package com.example.suvasam.adapter;
 
 import android.content.Context;
+import android.graphics.Color;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -45,6 +46,7 @@ public class EventListAdapter extends
     @Override
     public void onBindViewHolder(@NonNull EventListAdapter.EventViewHolder holder, int position) {
         String mCurrent = mEventList.get(position);
+//        holder.itemView.setBackgroundColor();
         holder.eventName.setText(mCurrent);
     }
 
