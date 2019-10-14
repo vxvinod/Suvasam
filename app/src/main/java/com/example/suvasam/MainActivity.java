@@ -5,6 +5,7 @@ import android.os.Bundle;
 
 import androidx.annotation.NonNull;
 
+import com.example.suvasam.database.EventFirebase;
 import com.example.suvasam.model.Events;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.firebase.database.DatabaseReference;
@@ -98,6 +99,7 @@ public class MainActivity extends AppCompatActivity implements DonateFragment.On
                 case R.id.navigation_notifications:
                     fm.beginTransaction().hide(active).show(fragment3).commit();
                     active = fragment3;
+                    EventFirebase.fetchDataFromFirebase();
                     return true;
             }
             return false;

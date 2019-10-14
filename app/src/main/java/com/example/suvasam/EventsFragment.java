@@ -13,8 +13,12 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import com.example.suvasam.adapter.EventListAdapter;
+import com.example.suvasam.database.EventFirebase;
+import com.example.suvasam.model.Events;
 
+import java.util.ArrayList;
 import java.util.LinkedList;
+import java.util.List;
 
 
 /**
@@ -75,21 +79,25 @@ public class EventsFragment extends Fragment {
                              Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_events, container, false);
         mRecyclerView = view.findViewById(R.id.recyclerview);
-        LinkedList<String> mEventList = new LinkedList<>();
-        mEventList.add("apple");
-        mEventList.add("apple1");
-        mEventList.add("apple2");
-        mEventList.add("apple3");
-        mEventList.add("apple4");
-        mEventList.add("apple5");
-        mEventList.add("apple6");
-        mEventList.add("apple7");
-        mEventList.add("apple8");
+        ArrayList<Events> mEventsList = EventFirebase.fetchDataFromFirebase();
+//
+//        LinkedList<String> mEventList = new LinkedList<>();
+//        mEventList.add("apple");
+//        mEventList.add("apple1");
+//        mEventList.add("apple2");
+//        mEventList.add("apple3");
+//        mEventList.add("apple4");
+//        mEventList.add("apple5");
+//        mEventList.add("apple6");
+//        mEventList.add("apple7");
+//        mEventList.add("apple8");
 
-        mAdapter = new EventListAdapter(getContext(), mEventList);
+        mAdapter = new EventListAdapter(getContext(), mEventsList);
         mRecyclerView.setAdapter(mAdapter);
         mRecyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
         // Inflate the layout for this fragment
+
+
         return view;
     }
 

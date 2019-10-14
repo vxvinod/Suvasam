@@ -8,4 +8,5 @@
     <color name="theme_primary_dark">#002c00</color>
     <color name="theme_accent">#FFB74D</color>
     <color name="cardview_back_color">#DFDEDB</color>
+    <color name="image_back_color">#F0EEEA</color>
 </resources>

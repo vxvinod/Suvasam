@@ -6,14 +6,29 @@ public class Events {
     public String name;
     public String imageUrl;
     public String description;
+    public Boolean fav;
+
+    public Boolean getFav() {
+        return fav;
+    }
+
+    public void setFav(Boolean fav) {
+        this.fav = fav;
+    }
+
+    public Events() {
+
+    }
+
     public String date;
 
-    public Events(int id, String name, String imageUrl, String description, String date) {
+    public Events(int id, String name, String imageUrl, String description, String date, Boolean fav) {
         this.id = id;
         this.name = name;
         this.imageUrl = imageUrl;
         this.description = description;
         this.date = date;
+        this.fav = fav;
     }
 
     public int getId() {
