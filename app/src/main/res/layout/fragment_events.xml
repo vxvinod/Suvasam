@@ -13,7 +13,7 @@
         tools:listitem="@layout/eventlist_item"
         tools:itemCount="5"
         android:clipToPadding="false"
-        android:paddingTop="100dp"
+        android:paddingTop="5dp"
         android:paddingLeft="4dp"
         android:paddingRight="4dp"
         android:paddingBottom="28dp"
