@@ -12,6 +12,8 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import com.example.suvasam.database.DonateFirebase;
+import com.example.suvasam.model.Donate;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
@@ -19,6 +21,9 @@ import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.LatLngBounds;
 import com.google.android.gms.maps.model.MarkerOptions;
+import com.google.android.material.floatingactionbutton.FloatingActionButton;
+
+import java.util.ArrayList;
 
 
 /**
@@ -35,9 +40,11 @@ public class DonateFragment extends Fragment implements OnMapReadyCallback {
     private static final String ARG_PARAM1 = "param1";
     private static final String ARG_PARAM2 = "param2";
     private GoogleMap map;
+    ArrayList<Donate> mAreaList;
     // TODO: Rename and change types of parameters
     private String mParam1;
     private String mParam2;
+    FloatingActionButton donateBtn;
 
     private OnFragmentInteractionListener mListener;
 
@@ -81,6 +88,7 @@ public class DonateFragment extends Fragment implements OnMapReadyCallback {
         // Inflate the layout for this fragment
         View view =  inflater.inflate(R.layout.fragment_donate, container, false);
         SupportMapFragment mapFragment = (SupportMapFragment) getChildFragmentManager().findFragmentById(R.id.map);
+        donateBtn = view.findViewById(R.id.donateBtn);
         if(mapFragment == null) {
             FragmentManager fm = getFragmentManager();
             FragmentTransaction ft = fm.beginTransaction();
@@ -88,6 +96,20 @@ public class DonateFragment extends Fragment implements OnMapReadyCallback {
             ft.replace(R.id.map, mapFragment).commit();
         }
         mapFragment.getMapAsync(this);
+
+        donateBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                DonateDialogFragment dialogFragment = new DonateDialogFragment();
+                Bundle bundle = new Bundle();
+                bundle.putParcelableArrayList("areaList", mAreaList);
+                dialogFragment.setArguments(bundle);
+                FragmentTransaction ft = getFragmentManager().beginTransaction();
+                ft.replace(R.id.donateFrameLayout, dialogFragment);
+                ft.commit();
+            }
+        });
+
         return view;
     }
 
@@ -118,6 +140,8 @@ public class DonateFragment extends Fragment implements OnMapReadyCallback {
     @Override
     public void onMapReady(GoogleMap googleMap) {
         map = googleMap;
+        mAreaList = DonateFirebase.fetchDataFromFirebase();
+
         LatLng madurai = new LatLng(9.922939, 78.114941);
 
         LatLng maduraiLeft = new LatLng(9.924006, 78.064849);
@@ -135,6 +159,12 @@ public class DonateFragment extends Fragment implements OnMapReadyCallback {
         int padding = (int) (width * 0.20);
 
         map.setLatLngBoundsForCameraTarget(bounds);
+
+        for(Donate area : mAreaList) {
+            LatLng areaPosition = new LatLng(area.getLat(), area.getLng());
+
+            map.addMarker(new MarkerOptions().position(areaPosition).title(area.getName()));
+        }
 
         map.addMarker(new MarkerOptions().position(madurai).title("Madurai"));
         map.moveCamera(CameraUpdateFactory.newLatLngBounds(bounds, width, height, padding));

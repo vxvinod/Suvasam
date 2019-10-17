@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/dialogLinearLayout"
+    android:layout_centerInParent="true"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:gravity="center"
+    android:layout_gravity="center"
+    android:orientation="vertical"
+    android:background="@color/theme_accent"
+    android:elevation="4dp"
+    android:padding="10dp">
+
+
+    <TextView
+        android:id="@+id/title"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_margin="16dp"
+        android:textStyle="bold"
+        android:text="Donate to Make Madurai Greener" />
+
+
+
+
+    <LinearLayout
+        android:id="@+id/checkBoxOuter"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        >
+        <LinearLayout
+            android:id="@+id/checkBoxCollection"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
+
+        </LinearLayout>
+        <Button
+            android:id="@+id/btnAdd"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Add" />
+
+
+    </LinearLayout>
+</LinearLayout>
