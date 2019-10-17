@@ -8,8 +8,8 @@ public class Donate implements Parcelable {
     private String name;
     private String donated;
     private int donationAmt;
-    private long lat;
-    private long lng;
+    private double lat;
+    private double lng;
     private int plantsCount;
 
     public Donate() {
@@ -20,8 +20,8 @@ public class Donate implements Parcelable {
         name = in.readString();
         donated = in.readString();
         donationAmt = in.readInt();
-        lat = in.readLong();
-        lng = in.readLong();
+        lat = in.readDouble();
+        lng = in.readDouble();
         plantsCount = in.readInt();
     }
 
@@ -69,19 +69,19 @@ public class Donate implements Parcelable {
         this.donationAmt = donationAmt;
     }
 
-    public long getLat() {
+    public Double getLat() {
         return lat;
     }
 
-    public void setLat(long lat) {
+    public void setLat(Double lat) {
         this.lat = lat;
     }
 
-    public long getLng() {
+    public Double getLng() {
         return lng;
     }
 
-    public void setLng(long lng) {
+    public void setLng(Double lng) {
         this.lng = lng;
     }
 
@@ -104,8 +104,8 @@ public class Donate implements Parcelable {
         dest.writeString(name);
         dest.writeString(donated);
         dest.writeInt(donationAmt);
-        dest.writeLong(lat);
-        dest.writeLong(lng);
+        dest.writeDouble(lat);
+        dest.writeDouble(lng);
         dest.writeInt(plantsCount);
 
     }

@@ -2,6 +2,7 @@ package com.example.suvasam.database;
 
 import android.util.Log;
 
+import com.example.suvasam.DonateFragment;
 import com.example.suvasam.model.Awareness;
 import com.example.suvasam.model.Donate;
 import com.google.firebase.database.DataSnapshot;
@@ -13,6 +14,8 @@ import com.google.firebase.database.ValueEventListener;
 import java.util.ArrayList;
 
 import androidx.annotation.NonNull;
+import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentTransaction;
 
 public class DonateFirebase {
 
@@ -29,12 +32,16 @@ public class DonateFirebase {
                     areaList.add(areaDetails);
                     Log.e("Get Data", areaDetails.getName());
                 }
+
+
             }
 
             @Override
             public void onCancelled(@NonNull DatabaseError databaseError) {
 
             }
+
+
         });
         for(Donate area : areaList) {
             Log.e("DONATE FIREBASE", String.valueOf(area.getDonationAmt()));

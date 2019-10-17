@@ -5,18 +5,27 @@ import android.os.Bundle;
 
 import androidx.annotation.NonNull;
 
+import com.example.suvasam.database.DonateFirebase;
 import com.example.suvasam.database.EventFirebase;
+import com.example.suvasam.model.Donate;
 import com.example.suvasam.model.Events;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
+import androidx.fragment.app.FragmentTransaction;
 
+import android.util.Log;
 import android.view.MenuItem;
 import android.widget.TextView;
+
+import java.util.ArrayList;
 
 public class MainActivity extends AppCompatActivity implements DonateFragment.OnFragmentInteractionListener,
         EventsFragment.OnFragmentInteractionListener, AwarenessFragment.OnFragmentInteractionListener
@@ -35,7 +44,10 @@ public class MainActivity extends AppCompatActivity implements DonateFragment.On
         public boolean onNavigationItemSelected(@NonNull MenuItem item) {
             switch (item.getItemId()) {
                 case R.id.navigation_home:
-
+                  fetchDataFromFirebase();
+////                    Bundle bundle = new Bundle();
+////                    bundle.putParcelableArrayList("areaList", mAreaList);
+////                    fragment1.setArguments(bundle);
                     fm.beginTransaction().hide(active).show(fragment1).commit();
                     active = fragment1;
 //                    //Test Firebase Access
@@ -123,5 +135,43 @@ public class MainActivity extends AppCompatActivity implements DonateFragment.On
     @Override
     public void onFragmentInteraction(Uri uri) {
 
+    }
+
+
+
+    public  ArrayList<Donate> fetchDataFromFirebase() {
+        final ArrayList<Donate> areaList = new ArrayList<>();
+        FirebaseDatabase database = FirebaseDatabase.getInstance();
+        DatabaseReference ref = database.getReference();
+        ref.child("area").addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                Log.e("Count", ""+dataSnapshot.getChildrenCount());
+                for(DataSnapshot postSnapshot: dataSnapshot.getChildren()) {
+                    Donate areaDetails = postSnapshot.getValue(Donate.class);
+                    areaList.add(areaDetails);
+                    Log.e("Get Data", areaDetails.getName());
+                }
+
+                Fragment donateFragment = new DonateFragment();
+                FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
+                Bundle bundle = new Bundle();
+                bundle.putParcelableArrayList("areaList", areaList);
+                donateFragment.setArguments(bundle);
+                ft.hide(active).show(donateFragment).commit();
+                active = donateFragment;
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+
+            }
+
+
+        });
+        for(Donate area : areaList) {
+            Log.e("DONATE FIREBASE", String.valueOf(area.getDonationAmt()));
+        }
+        return areaList;
     }
 }

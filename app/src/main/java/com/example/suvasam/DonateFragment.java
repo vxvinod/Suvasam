@@ -4,10 +4,12 @@ import android.content.Context;
 import android.net.Uri;
 import android.os.Bundle;
 
+import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
 
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -18,10 +20,16 @@ import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
+import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.LatLngBounds;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 
 import java.util.ArrayList;
 
@@ -39,7 +47,7 @@ public class DonateFragment extends Fragment implements OnMapReadyCallback {
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
     private static final String ARG_PARAM1 = "param1";
     private static final String ARG_PARAM2 = "param2";
-    private GoogleMap map;
+     GoogleMap map;
     ArrayList<Donate> mAreaList;
     // TODO: Rename and change types of parameters
     private String mParam1;
@@ -86,6 +94,8 @@ public class DonateFragment extends Fragment implements OnMapReadyCallback {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
+
+        mAreaList = fetchDataFromFirebase();
         View view =  inflater.inflate(R.layout.fragment_donate, container, false);
         SupportMapFragment mapFragment = (SupportMapFragment) getChildFragmentManager().findFragmentById(R.id.map);
         donateBtn = view.findViewById(R.id.donateBtn);
@@ -139,37 +149,34 @@ public class DonateFragment extends Fragment implements OnMapReadyCallback {
 
     @Override
     public void onMapReady(GoogleMap googleMap) {
-        map = googleMap;
-        mAreaList = DonateFirebase.fetchDataFromFirebase();
+            map = googleMap;
 
-        LatLng madurai = new LatLng(9.922939, 78.114941);
+            LatLng madurai = new LatLng(9.922939, 78.114941);
 
-        LatLng maduraiLeft = new LatLng(9.924006, 78.064849);
-        LatLng maduraiRight = new LatLng(9.929358, 78.219317);
+            LatLng maduraiLeft = new LatLng(9.924006, 78.064849);
+            LatLng maduraiRight = new LatLng(9.929358, 78.219317);
 
-        LatLngBounds.Builder builder = new LatLngBounds.Builder();
-        builder.include(maduraiLeft);
-        builder.include(maduraiRight);
 
-        LatLngBounds bounds = builder.build();
+            LatLngBounds.Builder builder = new LatLngBounds.Builder();
+            builder.include(maduraiLeft);
+            builder.include(maduraiRight);
 
-        int width = getResources().getDisplayMetrics().widthPixels;
-        int height = getResources().getDisplayMetrics().heightPixels;
+            LatLngBounds bounds = builder.build();
 
-        int padding = (int) (width * 0.20);
+            int width = getResources().getDisplayMetrics().widthPixels;
+            int height = getResources().getDisplayMetrics().heightPixels;
 
-        map.setLatLngBoundsForCameraTarget(bounds);
+            int padding = (int) (width * 0.20);
 
-        for(Donate area : mAreaList) {
-            LatLng areaPosition = new LatLng(area.getLat(), area.getLng());
+            map.setLatLngBoundsForCameraTarget(bounds);
+        Log.e("Donate Fragment LAT", "Inside LAT LNG");
 
-            map.addMarker(new MarkerOptions().position(areaPosition).title(area.getName()));
-        }
 
-        map.addMarker(new MarkerOptions().position(madurai).title("Madurai"));
-        map.moveCamera(CameraUpdateFactory.newLatLngBounds(bounds, width, height, padding));
+            map.addMarker(new MarkerOptions().position(madurai).title("Madurai"));
+            map.addMarker(new MarkerOptions().position(maduraiLeft).title("MaduraiLeft"));
+            map.moveCamera(CameraUpdateFactory.newLatLngBounds(bounds, width, height, padding));
 
-        map.setMinZoomPreference(map.getCameraPosition().zoom);
+            map.setMinZoomPreference(map.getCameraPosition().zoom);
     }
 
     /**
@@ -186,4 +193,49 @@ public class DonateFragment extends Fragment implements OnMapReadyCallback {
         // TODO: Update argument type and name
         void onFragmentInteraction(Uri uri);
     }
+
+    public ArrayList<Donate> fetchDataFromFirebase() {
+        final ArrayList<Donate> areaList = new ArrayList<>();
+        FirebaseDatabase database = FirebaseDatabase.getInstance();
+        DatabaseReference ref = database.getReference();
+        ref.child("area").addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                Log.e("Count", ""+dataSnapshot.getChildrenCount());
+                for(DataSnapshot postSnapshot: dataSnapshot.getChildren()) {
+                    Donate areaDetails = postSnapshot.getValue(Donate.class);
+                    areaList.add(areaDetails);
+                    Log.e("Get Data", areaDetails.getName());
+                }
+
+                for(Donate area : areaList) {
+                    Log.e("Donate Fragment LAT", String.valueOf(area.getLat()));
+                    Log.e("Donate Fragment LNG", String.valueOf(area.getLng()));
+                    LatLng areaPosition = new LatLng(area.getLat(), area.getLng());
+                    if(area.getDonated().equals("yes")) {
+                        map.addMarker(new MarkerOptions().position(areaPosition).title(area.getName()).
+                                icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_GREEN)));
+                    } else {
+                        map.addMarker(new MarkerOptions().position(areaPosition).title(area.getName()).
+                                icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_ORANGE)));
+                    }
+                }
+
+
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+
+            }
+
+
+        });
+        for(Donate area : areaList) {
+            Log.e("DONATE FIREBASE", String.valueOf(area.getDonationAmt()));
+        }
+        return areaList;
+    }
+
+
 }
