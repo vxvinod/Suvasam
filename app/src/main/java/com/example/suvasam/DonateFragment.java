@@ -110,6 +110,7 @@ public class DonateFragment extends Fragment implements OnMapReadyCallback {
         donateBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                mAreaList = fetchDataFromFirebase();
                 DonateDialogFragment dialogFragment = new DonateDialogFragment();
                 Bundle bundle = new Bundle();
                 bundle.putParcelableArrayList("areaList", mAreaList);
@@ -129,6 +130,14 @@ public class DonateFragment extends Fragment implements OnMapReadyCallback {
             mListener.onFragmentInteraction(uri);
         }
     }
+
+//    @Override
+//    public void setUserVisibleHint(boolean isVisibleToUser) {
+//        super.setUserVisibleHint(isVisibleToUser);
+//        if(isVisibleToUser) {
+//            getFragmentManager().beginTransaction().detach(this).attach(this).commit();
+//        }
+//    }
 
     @Override
     public void onAttach(Context context) {
@@ -195,7 +204,8 @@ public class DonateFragment extends Fragment implements OnMapReadyCallback {
     }
 
     public ArrayList<Donate> fetchDataFromFirebase() {
-        final ArrayList<Donate> areaList = new ArrayList<>();
+        mAreaList = new ArrayList<>();
+        //final ArrayList<Donate> areaList = new ArrayList<>();
         FirebaseDatabase database = FirebaseDatabase.getInstance();
         DatabaseReference ref = database.getReference();
         ref.child("area").addValueEventListener(new ValueEventListener() {
@@ -204,11 +214,11 @@ public class DonateFragment extends Fragment implements OnMapReadyCallback {
                 Log.e("Count", ""+dataSnapshot.getChildrenCount());
                 for(DataSnapshot postSnapshot: dataSnapshot.getChildren()) {
                     Donate areaDetails = postSnapshot.getValue(Donate.class);
-                    areaList.add(areaDetails);
+                    mAreaList.add(areaDetails);
                     Log.e("Get Data", areaDetails.getName());
                 }
 
-                for(Donate area : areaList) {
+                for(Donate area : mAreaList) {
                     Log.e("Donate Fragment LAT", String.valueOf(area.getLat()));
                     Log.e("Donate Fragment LNG", String.valueOf(area.getLng()));
                     LatLng areaPosition = new LatLng(area.getLat(), area.getLng());
@@ -231,10 +241,8 @@ public class DonateFragment extends Fragment implements OnMapReadyCallback {
 
 
         });
-        for(Donate area : areaList) {
-            Log.e("DONATE FIREBASE", String.valueOf(area.getDonationAmt()));
-        }
-        return areaList;
+
+        return mAreaList;
     }
 
 

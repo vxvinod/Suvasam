@@ -12,7 +12,10 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.suvasam.model.Donate;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
 
+import java.lang.ref.Reference;
 import java.util.ArrayList;
 import java.util.zip.Inflater;
 
@@ -44,6 +47,12 @@ public class DonateConfirmationFragment extends DialogFragment {
             public void onClick(View v) {
                 dismiss();
                 Toast.makeText(getContext(), "Payment Done", Toast.LENGTH_LONG).show();
+                FirebaseDatabase db = FirebaseDatabase.getInstance();
+                DatabaseReference ref = db.getReference();
+                for(Donate area : mDonateList) {
+                    ref.child("area").child(String.valueOf(area.getId())).child("donated").setValue("yes");
+                }
+
             }
         });
 

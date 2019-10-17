@@ -28,7 +28,7 @@ public class DonateDialogFragment extends DialogFragment {
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-
+        mDonateList = new ArrayList<>();
         View view = inflater.inflate(R.layout.fragment_donate_dialog, container, false);
         final LinearLayout checkBoxLayout = view.findViewById(R.id.checkBoxCollection);
         Button add = view.findViewById(R.id.btnAdd);
@@ -36,10 +36,13 @@ public class DonateDialogFragment extends DialogFragment {
          Log.e("Dialog Frag", "Inside Create View"+ mDonateList.size());
         for(Donate plant : mDonateList) {
             Log.e("Dialog Frag", "Inside Create View For Loop");
-            CheckBox ch = new CheckBox(getContext());
-            Log.e("Dialog frag", plant.getName()+" " + plant.getPlantsCount() + " "+ plant.getDonationAmt());
-            ch.setText(plant.getName() + " " + plant.getPlantsCount()+ " "+ plant.getDonationAmt());
-            checkBoxLayout.addView(ch);
+            if(plant.getDonated().equals("no")) {
+                CheckBox ch = new CheckBox(getContext());
+                Log.e("Dialog frag", plant.getName() + " " + plant.getPlantsCount() + " " + plant.getDonationAmt());
+                ch.setText(plant.getName() + " " + plant.getPlantsCount() + " " + plant.getDonationAmt());
+                ch.setId(plant.getId());
+                checkBoxLayout.addView(ch);
+            }
         }
 //        for(int i = 0; i < 5; i++) {
 //            CheckBox ch = new CheckBox(getContext());
@@ -56,7 +59,7 @@ public class DonateDialogFragment extends DialogFragment {
                     if(nextChild instanceof CheckBox) {
                         CheckBox check = (CheckBox) nextChild;
                         if (check.isChecked()) {
-                            selectedArea.add(mDonateList.get(i));
+                            selectedArea.add(mDonateList.get(check.getId()));
                             totalDonationAmt = totalDonationAmt + mDonateList.get(i).getDonationAmt();
                         }
                     }
@@ -70,7 +73,7 @@ public class DonateDialogFragment extends DialogFragment {
                 dismiss();
                 ft.replace(R.id.donateFrameLayout, confirmationFragment);
                 ft.commit();
-
+                checkBoxLayout.removeAllViews();
                 Toast.makeText(getContext(), String.valueOf(totalDonationAmt), Toast.LENGTH_LONG ).show();
             }
         });
