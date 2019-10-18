@@ -4,10 +4,12 @@ import android.content.Context;
 import android.net.Uri;
 import android.os.Bundle;
 
+import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -15,6 +17,13 @@ import android.view.ViewGroup;
 import com.example.suvasam.adapter.EventListAdapter;
 import com.example.suvasam.database.EventFirebase;
 import com.example.suvasam.model.Events;
+import com.example.suvasam.widgets.SuvasamEventWidget;
+import com.example.suvasam.widgets.WidgetUpdateIntentService;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 
 import java.util.ArrayList;
 import java.util.LinkedList;
@@ -34,7 +43,7 @@ public class EventsFragment extends Fragment {
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
     private static final String ARG_PARAM1 = "param1";
     private static final String ARG_PARAM2 = "param2";
-
+    Context mContext;
     // TODO: Rename and change types of parameters
     private String mParam1;
     private String mParam2;
@@ -79,7 +88,7 @@ public class EventsFragment extends Fragment {
                              Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_events, container, false);
         mRecyclerView = view.findViewById(R.id.recyclerview);
-        ArrayList<Events> mEventsList = EventFirebase.fetchDataFromFirebase();
+        ArrayList<Events> mEventsList = fetchDataFromFirebase();
 //
 //        LinkedList<String> mEventList = new LinkedList<>();
 //        mEventList.add("apple");
@@ -111,6 +120,7 @@ public class EventsFragment extends Fragment {
     @Override
     public void onAttach(Context context) {
         super.onAttach(context);
+        mContext = context;
         if (context instanceof OnFragmentInteractionListener) {
             mListener = (OnFragmentInteractionListener) context;
         } else {
@@ -122,9 +132,35 @@ public class EventsFragment extends Fragment {
     @Override
     public void onDetach() {
         super.onDetach();
+
         mListener = null;
     }
+    public  ArrayList<Events> fetchDataFromFirebase() {
+        final ArrayList<Events> eventsList = new ArrayList<>();
+        FirebaseDatabase database = FirebaseDatabase.getInstance();
+        DatabaseReference ref = database.getReference();
 
+        ref.child("events").addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                Log.e("Count", ""+dataSnapshot.getChildrenCount());
+                for(DataSnapshot postSnapshot: dataSnapshot.getChildren()) {
+                    Events events = postSnapshot.getValue(Events.class);
+                    eventsList.add(events);
+                    Log.e("Get Data", events.name);
+                }
+                Log.e("SETTING WIDGET", "Setting Data to Widget");
+                SuvasamEventWidget.mInterestedEvents = eventsList;
+                WidgetUpdateIntentService.startAddWidgetData( getContext(), eventsList);
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+
+            }
+        });
+        return eventsList;
+    }
     /**
      * This interface must be implemented by activities that contain this
      * fragment to allow an interaction in this fragment to be communicated

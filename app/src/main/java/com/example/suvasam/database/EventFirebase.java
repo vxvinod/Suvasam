@@ -5,6 +5,8 @@ import android.util.Log;
 import androidx.annotation.NonNull;
 
 import com.example.suvasam.model.Events;
+import com.example.suvasam.widgets.SuvasamEventWidget;
+import com.example.suvasam.widgets.WidgetUpdateIntentService;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
@@ -31,6 +33,9 @@ public class EventFirebase {
                     eventsList.add(events);
                     Log.e("Get Data", events.name);
                 }
+                Log.e("SETTING WIDGET", "Setting Data to Widget");
+                SuvasamEventWidget.mInterestedEvents = eventsList;
+               // WidgetUpdateIntentService.startAddWidgetData(, eventsList);
             }
 
             @Override

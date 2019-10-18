@@ -222,7 +222,7 @@ public class DonateFragment extends Fragment implements OnMapReadyCallback {
                     Log.e("Donate Fragment LAT", String.valueOf(area.getLat()));
                     Log.e("Donate Fragment LNG", String.valueOf(area.getLng()));
                     LatLng areaPosition = new LatLng(area.getLat(), area.getLng());
-                    if(area.getDonated().equals("yes")) {
+                    if(area.getDonated().equals("yes") && (map != null)) {
                         map.addMarker(new MarkerOptions().position(areaPosition).title(area.getName()).
                                 icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_GREEN)));
                     } else {

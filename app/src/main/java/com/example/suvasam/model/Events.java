@@ -1,12 +1,42 @@
 package com.example.suvasam.model;
 
-public class Events {
+import android.os.Parcel;
+import android.os.Parcelable;
+
+public class Events implements Parcelable {
 
     public int id;
     public String name;
     public String imageUrl;
     public String description;
     public Boolean fav;
+
+    public Events(String name, String date) {
+        this.name = name;
+        this.date = date;
+    }
+
+    protected Events(Parcel in) {
+        id = in.readInt();
+        name = in.readString();
+        imageUrl = in.readString();
+        description = in.readString();
+        byte tmpFav = in.readByte();
+        fav = tmpFav == 0 ? null : tmpFav == 1;
+        date = in.readString();
+    }
+
+    public static final Creator<Events> CREATOR = new Creator<Events>() {
+        @Override
+        public Events createFromParcel(Parcel in) {
+            return new Events(in);
+        }
+
+        @Override
+        public Events[] newArray(int size) {
+            return new Events[size];
+        }
+    };
 
     public Boolean getFav() {
         return fav;
@@ -69,5 +99,20 @@ public class Events {
 
     public void setDate(String date) {
         this.date = date;
+    }
+
+    @Override
+    public int describeContents() {
+        return 0;
+    }
+
+    @Override
+    public void writeToParcel(Parcel dest, int flags) {
+        dest.writeInt(id);
+        dest.writeString(name);
+        dest.writeString(imageUrl);
+        dest.writeString(description);
+        dest.writeByte((byte) (fav == null ? 0 : fav ? 1 : 2));
+        dest.writeString(date);
     }
 }
