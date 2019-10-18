@@ -11,4 +11,7 @@
     <string name="action_share">Share</string>
     <string name="appwidget_text">EXAMPLE</string>
     <string name="add_widget">Add widget</string>
+
+    <string name="admob_app_id">ca-app-pub-6506911315414653~6740738797</string>
+    <string name="interstitial_ad_unit_id">ca-app-pub-6506911315414653/6509638653</string>
 </resources>

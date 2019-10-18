@@ -9,6 +9,9 @@ import com.example.suvasam.database.DonateFirebase;
 import com.example.suvasam.database.EventFirebase;
 import com.example.suvasam.model.Donate;
 import com.example.suvasam.model.Events;
+import com.google.android.gms.ads.AdListener;
+import com.google.android.gms.ads.AdRequest;
+import com.google.android.gms.ads.InterstitialAd;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
@@ -37,6 +40,7 @@ public class MainActivity extends AppCompatActivity implements DonateFragment.On
     final Fragment fragment3 = new AwarenessFragment();
     final FragmentManager fm = getSupportFragmentManager();
     Fragment active = fragment1;
+    private InterstitialAd mInterstitialAd;
     private BottomNavigationView.OnNavigationItemSelectedListener mOnNavigationItemSelectedListener
             = new BottomNavigationView.OnNavigationItemSelectedListener() {
 
@@ -44,7 +48,7 @@ public class MainActivity extends AppCompatActivity implements DonateFragment.On
         public boolean onNavigationItemSelected(@NonNull MenuItem item) {
             switch (item.getItemId()) {
                 case R.id.navigation_home:
-                  fetchDataFromFirebase();
+               //   fetchDataFromFirebase();
 ////                    Bundle bundle = new Bundle();
 ////                    bundle.putParcelableArrayList("areaList", mAreaList);
 ////                    fragment1.setArguments(bundle);
@@ -106,9 +110,13 @@ public class MainActivity extends AppCompatActivity implements DonateFragment.On
                     return true;
                 case R.id.navigation_dashboard:
                     fm.beginTransaction().hide(active).show(fragment2).commit();
+
                     active = fragment2;
                     return true;
                 case R.id.navigation_notifications:
+                    if(mInterstitialAd.isLoaded()) {
+                        mInterstitialAd.show();
+                    }
                     fm.beginTransaction().hide(active).show(fragment3).commit();
                     active = fragment3;
                     return true;
@@ -126,9 +134,19 @@ public class MainActivity extends AppCompatActivity implements DonateFragment.On
         fm.beginTransaction().add(R.id.main_container, fragment2, "2").hide(fragment2).commit();
         fm.beginTransaction().add(R.id.main_container, fragment1, "1").commit();
 
-
+        mInterstitialAd = new InterstitialAd(this);
+        mInterstitialAd.setAdUnitId("ca-app-pub-6506911315414653/6509638653");
+        mInterstitialAd.loadAd(new AdRequest.Builder().build());
         BottomNavigationView navigation = (BottomNavigationView) findViewById(R.id.navigation);
         navigation.setOnNavigationItemSelectedListener(mOnNavigationItemSelectedListener);
+
+        mInterstitialAd.setAdListener(new AdListener(){
+
+            @Override
+            public void onAdClosed() {
+                mInterstitialAd.loadAd(new AdRequest.Builder().build());
+            }
+        });
     }
 
     @Override
