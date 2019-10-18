@@ -24,15 +24,14 @@ public class WidgetDataProvider implements RemoteViewsService.RemoteViewsFactory
 
     @Override
     public void onCreate() {
-       // mInterestedEvents.add(new Events("ss", "ssss"));
-        mInterestedEvents = EventFirebase.fetchDataFromFirebase();
-        Log.e("WIDGET", String.valueOf(mInterestedEvents.size()));
+        Log.e("WIDGET VIEW", "CREATE");
+       // mInterestedEvents = EventFirebase.fetchDataFromFirebase();
     }
 
     @Override
     public void onDataSetChanged() {
+        Log.e("WIDGET VIEW", "ON DATA SET CHANGED");
         mInterestedEvents = EventFirebase.fetchDataFromFirebase();
-        //mInterestedEvents = SuvasamEventWidget.mInterestedEvents;
     }
 
     @Override

@@ -150,7 +150,7 @@ public class EventsFragment extends Fragment {
                     Log.e("Get Data", events.name);
                 }
                 Log.e("SETTING WIDGET", "Setting Data to Widget");
-                SuvasamEventWidget.mInterestedEvents = eventsList;
+                SuvasamEventWidget.setEvents(eventsList);
                 WidgetUpdateIntentService.startAddWidgetData( getContext(), eventsList);
             }
 

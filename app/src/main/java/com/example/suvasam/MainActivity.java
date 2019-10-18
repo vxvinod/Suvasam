@@ -111,7 +111,6 @@ public class MainActivity extends AppCompatActivity implements DonateFragment.On
                 case R.id.navigation_notifications:
                     fm.beginTransaction().hide(active).show(fragment3).commit();
                     active = fragment3;
-                    EventFirebase.fetchDataFromFirebase();
                     return true;
             }
             return false;

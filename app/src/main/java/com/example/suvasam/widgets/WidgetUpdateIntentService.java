@@ -31,7 +31,7 @@ public class WidgetUpdateIntentService extends IntentService {
         try {
             Intent intent = new Intent(context, SuvasamWidgetService.class);
             intent.setAction(ACTION_UPDATE_WIDGET);
-            intent.putParcelableArrayListExtra("ingredients", (ArrayList<? extends Parcelable>) events);
+            intent.putParcelableArrayListExtra("ingredients", events);
             context.startService(intent);
         } catch (Exception e) {
             Log.e(TAG, "Exception starting service", e);

@@ -21,6 +21,14 @@ public class SuvasamEventWidget extends AppWidgetProvider {
 
     public static ArrayList<Events> mInterestedEvents;
 
+    public static void setEvents(ArrayList<Events> events) {
+        mInterestedEvents = events;
+    }
+
+    public static ArrayList<Events> getEvents(){
+        return mInterestedEvents;
+    }
+
     static void updateAppWidget(Context context, AppWidgetManager appWidgetManager,
                                 int appWidgetId) {
 
