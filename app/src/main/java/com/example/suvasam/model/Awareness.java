@@ -1,6 +1,9 @@
 package com.example.suvasam.model;
 
-public class Awareness {
+import android.os.Parcel;
+import android.os.Parcelable;
+
+public class Awareness implements Parcelable {
 
     private String title;
     private String imageUrl;
@@ -18,6 +21,35 @@ public class Awareness {
         this.id = id;
         this.description = description;
         this.date = date;
+    }
+
+    protected Awareness(Parcel in) {
+        title = in.readString();
+        imageUrl = in.readString();
+        id = in.readInt();
+        description = in.readString();
+        date = in.readString();
+    }
+
+    public static final Creator<Awareness> CREATOR = new Creator<Awareness>() {
+        @Override
+        public Awareness createFromParcel(Parcel in) {
+            return new Awareness(in);
+        }
+
+        @Override
+        public Awareness[] newArray(int size) {
+            return new Awareness[size];
+        }
+    };
+
+    @Override
+    public void writeToParcel(Parcel dest, int flags) {
+        dest.writeString(title);
+        dest.writeString(imageUrl);
+        dest.writeInt(id);
+        dest.writeString(description);
+        dest.writeString(date);
     }
 
     public String getTitle() {
@@ -59,4 +91,11 @@ public class Awareness {
     public void setDate(String date) {
         this.date = date;
     }
+
+    @Override
+    public int describeContents() {
+        return 0;
+    }
+
+
 }

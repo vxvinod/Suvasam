@@ -1,5 +1,6 @@
 package com.example.suvasam;
 
+import android.content.Context;
 import android.net.Uri;
 import android.os.Bundle;
 
@@ -19,27 +20,34 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
+import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
 
+import android.os.PersistableBundle;
+import android.util.AttributeSet;
 import android.util.Log;
 import android.view.MenuItem;
+import android.view.View;
 import android.widget.TextView;
 
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
 
 public class MainActivity extends AppCompatActivity implements DonateFragment.OnFragmentInteractionListener,
         EventsFragment.OnFragmentInteractionListener, AwarenessFragment.OnFragmentInteractionListener
 {
 
 
-    final Fragment fragment1 = new DonateFragment();
-    final Fragment fragment2 = new EventsFragment();
-    final Fragment fragment3 = new AwarenessFragment();
-    final FragmentManager fm = getSupportFragmentManager();
-    Fragment active = fragment1;
+     Fragment fragment1 = new DonateFragment();
+     Fragment fragment2 = new EventsFragment();
+     Fragment fragment3 = new AwarenessFragment();
+    FragmentManager fm ;
+    Map<String, Fragment.SavedState> savedStateMap = new HashMap<>();
+    Fragment active ;
     private InterstitialAd mInterstitialAd;
     private BottomNavigationView.OnNavigationItemSelectedListener mOnNavigationItemSelectedListener
             = new BottomNavigationView.OnNavigationItemSelectedListener() {
@@ -52,8 +60,13 @@ public class MainActivity extends AppCompatActivity implements DonateFragment.On
 ////                    Bundle bundle = new Bundle();
 ////                    bundle.putParcelableArrayList("areaList", mAreaList);
 ////                    fragment1.setArguments(bundle);
-                    fm.beginTransaction().hide(active).show(fragment1).commit();
-                    active = fragment1;
+                    Log.e("MAIN ACTIVITY", "Home BTN active"+active.getTag());
+                    Log.e("MAIN ACTIVITY", "Home BTN fragment1"+fragment1.getTag());
+                    if(!fragment1.isInLayout()) {
+                        fm.beginTransaction().hide(active).show(fragment1).commit();
+                        active = fragment1;
+                    }
+
 //                    //Test Firebase Access
 //                    FirebaseDatabase database = FirebaseDatabase.getInstance();
 //                    DatabaseReference myRef = database.getReference();
@@ -109,16 +122,27 @@ public class MainActivity extends AppCompatActivity implements DonateFragment.On
 
                     return true;
                 case R.id.navigation_dashboard:
-                    fm.beginTransaction().hide(active).show(fragment2).commit();
+                    Log.e("MAIN ACTIVITY", "Dashboard BTN active"+active.getTag());
+                    Log.e("MAIN ACTIVITY", "Dashboard BTN fragment2"+fragment2.getTag());
+                    if(!fragment2.isInLayout()) {
+                        fm.beginTransaction().hide(active).show(fragment2).commit();
+                        active = fragment2;
+                    }
 
-                    active = fragment2;
+//                    fm.beginTransaction().remove(active).replace(R.id.main_container, fragment2).commit();
+//                    active = fragment2;
                     return true;
                 case R.id.navigation_notifications:
                     if(mInterstitialAd.isLoaded()) {
                         mInterstitialAd.show();
                     }
-                    fm.beginTransaction().hide(active).show(fragment3).commit();
-                    active = fragment3;
+                    Log.e("MAIN ACTIVITY", "Notification BTN active"+active.getTag());
+                    Log.e("MAIN ACTIVITY", "Notification BTN fragment3"+fragment3.getTag());
+//                    if(!fragment3.isInLayout()) {
+//                        fm.beginTransaction().hide(active).show(fragment2).commit();
+//                        active = fragment3;
+//                    }
+
                     return true;
             }
             return false;
@@ -127,26 +151,63 @@ public class MainActivity extends AppCompatActivity implements DonateFragment.On
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+        Log.e("MAIN ACTIVITY", "Inside if OnCreate");
+        fm = getSupportFragmentManager();
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        fm.beginTransaction().add(R.id.main_container, fragment3, "3").hide(fragment3).commit();
-        fm.beginTransaction().add(R.id.main_container, fragment2, "2").hide(fragment2).commit();
-        fm.beginTransaction().add(R.id.main_container, fragment1, "1").commit();
+        if(savedInstanceState != null) {
+            Log.e("MAIN ACTIVITY", "ACTIVE FRAG IS null");
+            fragment1 = (DonateFragment) getSupportFragmentManager().findFragmentByTag("1");
+            fragment2 = (EventsFragment) getSupportFragmentManager().findFragmentByTag("2");
+          //  fragment3 = (AwarenessFragment) getSupportFragmentManager().findFragmentByTag("3");
+            active = fragment2;
+        } else {
+            Log.e("MAIN ACTIVITY", "Inside if OnCreate- savestate null");
+           // fm.beginTransaction().add(R.id.main_container, fragment3, "3").hide(fragment3).commit();
+            fm.beginTransaction().add(R.id.main_container, fragment2, "2").hide(fragment2).commit();
+            fm.beginTransaction().add(R.id.main_container, fragment1, "1").hide(fragment1).commit();
+            active = fragment1;
+        }
+//        if(savedInstanceState != null) {
+//            Log.e("MAIN ACTIVITY", "Inside if OnCreate- savestate not null");
+//            String tagName = savedInstanceState.getString("fragmentTag");
+//            Log.e("MAIN ACTIVITY", "Inside if OnCreate- savestate not null - TaG NAME - "+tagName);
+//            fragment1 = getSupportFragmentManager().getFragment(savedInstanceState, "fragment1");
+//            fragment2 = getSupportFragmentManager().getFragment(savedInstanceState, "fragment2");
+//            fragment3 = getSupportFragmentManager().getFragment(savedInstanceState, "fragment3");
+//            active = fragment2;
+        //} else {
 
-        mInterstitialAd = new InterstitialAd(this);
-        mInterstitialAd.setAdUnitId("ca-app-pub-6506911315414653/6509638653");
-        mInterstitialAd.loadAd(new AdRequest.Builder().build());
-        BottomNavigationView navigation = (BottomNavigationView) findViewById(R.id.navigation);
-        navigation.setOnNavigationItemSelectedListener(mOnNavigationItemSelectedListener);
+        //}
+        fm.beginTransaction().show(active).commit();
 
-        mInterstitialAd.setAdListener(new AdListener(){
+       // if(savedInstanceState == null) {
 
-            @Override
-            public void onAdClosed() {
-                mInterstitialAd.loadAd(new AdRequest.Builder().build());
-            }
-        });
+
+            mInterstitialAd = new InterstitialAd(this);
+            mInterstitialAd.setAdUnitId("ca-app-pub-6506911315414653/6509638653");
+            mInterstitialAd.loadAd(new AdRequest.Builder().build());
+            BottomNavigationView navigation = (BottomNavigationView) findViewById(R.id.navigation);
+            navigation.setOnNavigationItemSelectedListener(mOnNavigationItemSelectedListener);
+
+            mInterstitialAd.setAdListener(new AdListener() {
+
+                @Override
+                public void onAdClosed() {
+                    mInterstitialAd.loadAd(new AdRequest.Builder().build());
+                }
+            });
+        //} else {
+          //  Log.e("MAIN ACTIVITY", "Inside else OnCreate");
+           // fm.beginTransaction().replace(R.id.main_container, active).commit();
+        //}
+    }
+
+    @Nullable
+    @Override
+    public View onCreateView(@NonNull String name, @NonNull Context context, @NonNull AttributeSet attrs) {
+        return super.onCreateView(name, context, attrs);
     }
 
     @Override
@@ -190,5 +251,37 @@ public class MainActivity extends AppCompatActivity implements DonateFragment.On
             Log.e("DONATE FIREBASE", String.valueOf(area.getDonationAmt()));
         }
         return areaList;
+    }
+
+    @Override
+    public void onRestoreInstanceState(Bundle savedInstanceState, PersistableBundle persistentState) {
+        Log.e("Main Activity", "Inside onRestoreInstanceState");
+        super.onRestoreInstanceState(savedInstanceState, persistentState);
+        if(savedInstanceState != null) {
+         //   Fragment.SavedState st = savedInstanceState.get("active");
+            active.setInitialSavedState((Fragment.SavedState) savedInstanceState.get("active"));
+            fragment1.setInitialSavedState((Fragment.SavedState) savedInstanceState.get("fragment1"));
+            fragment2.setInitialSavedState((Fragment.SavedState) savedInstanceState.get("fragment2"));
+            fragment3.setInitialSavedState((Fragment.SavedState) savedInstanceState.get("fragment3"));
+        }
+    }
+
+    @Override
+    public void onSaveInstanceState(Bundle outState, PersistableBundle outPersistentState) {
+        Log.e("Main Activity", "Inside onSaveInstanceState");
+
+        super.onSaveInstanceState(outState, outPersistentState);
+        savedStateMap.put("active", getSupportFragmentManager().saveFragmentInstanceState(active));
+        savedStateMap.put("fragment1", getSupportFragmentManager().saveFragmentInstanceState(fragment1));
+        savedStateMap.put("fragment2", getSupportFragmentManager().saveFragmentInstanceState(fragment2));
+        savedStateMap.put("fragment3", getSupportFragmentManager().saveFragmentInstanceState(fragment3));
+        outState.putString("fragmentTag", active.getTag());
+        Log.e("Main Activity", "Inside onSaveInstanceState FRAGMENT TAG"+active.getTag());
+        getSupportFragmentManager().putFragment(outState, "fragment1", fragment1);
+        getSupportFragmentManager().putFragment(outState, "fragment2", fragment2);
+        getSupportFragmentManager().putFragment(outState, "fragment3", fragment3);
+//        getSupportFragmentManager().saveFragmentInstanceState(fragment2);
+//        getSupportFragmentManager().saveFragmentInstanceState(fragment3);
+        getSupportFragmentManager().putFragment(outState, "activeFragment", active);
     }
 }

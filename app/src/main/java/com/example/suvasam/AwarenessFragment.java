@@ -4,6 +4,8 @@ import android.content.Context;
 import android.net.Uri;
 import android.os.Bundle;
 
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import androidx.viewpager2.widget.ViewPager2;
 
@@ -39,7 +41,7 @@ public class AwarenessFragment extends Fragment {
     private String mParam2;
     private ViewPager2 viewPager2;
     private OnFragmentInteractionListener mListener;
-
+    ArrayList<Awareness> awarenessList;
     public AwarenessFragment() {
         // Required empty public constructor
     }
@@ -84,8 +86,11 @@ public class AwarenessFragment extends Fragment {
                 super.onPageScrolled(position, positionOffset, positionOffsetPixels);
             }
         });
-
-        ArrayList<Awareness> awarenessList = AwarenessFirebase.fetchDataFromFirebase();
+        if(savedInstanceState == null) {
+            awarenessList = AwarenessFirebase.fetchDataFromFirebase();
+        } else {
+            awarenessList = savedInstanceState.getParcelableArrayList("awarenessList");
+        }
 //
 //        List<String> list = new ArrayList<>();
 //        list.add("First Screen");
@@ -96,6 +101,20 @@ public class AwarenessFragment extends Fragment {
         viewPager2.setAdapter(new AwarenessViewPagerAdapter(getContext(), awarenessList, viewPager2));
 
         return view;
+    }
+
+    @Override
+    public void onActivityCreated(@Nullable Bundle savedInstanceState) {
+        super.onActivityCreated(savedInstanceState);
+        if(savedInstanceState != null) {
+            awarenessList = savedInstanceState.getParcelableArrayList("awarenessList");
+        }
+    }
+
+    @Override
+    public void onSaveInstanceState(@NonNull Bundle outState) {
+        super.onSaveInstanceState(outState);
+        outState.putParcelableArrayList("awarenessList", awarenessList);
     }
 
     // TODO: Rename method, update argument and hook method into UI event

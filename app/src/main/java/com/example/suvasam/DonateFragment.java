@@ -5,6 +5,7 @@ import android.net.Uri;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
@@ -16,6 +17,7 @@ import android.view.ViewGroup;
 
 import com.example.suvasam.database.DonateFirebase;
 import com.example.suvasam.model.Donate;
+import com.example.suvasam.model.Events;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
@@ -94,8 +96,11 @@ public class DonateFragment extends Fragment implements OnMapReadyCallback {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-
-        mAreaList = fetchDataFromFirebase();
+        if(savedInstanceState == null) {
+            mAreaList = fetchDataFromFirebase();
+        } else {
+            mAreaList = savedInstanceState.getParcelableArrayList("areaList");
+        }
         View view =  inflater.inflate(R.layout.fragment_donate, container, false);
         SupportMapFragment mapFragment = (SupportMapFragment) getChildFragmentManager().findFragmentById(R.id.map);
         donateBtn = view.findViewById(R.id.donateBtn);
@@ -104,9 +109,10 @@ public class DonateFragment extends Fragment implements OnMapReadyCallback {
             FragmentTransaction ft = fm.beginTransaction();
             mapFragment = SupportMapFragment.newInstance();
             ft.replace(R.id.map, mapFragment).commit();
+
         }
         mapFragment.getMapAsync(this);
-
+        updateMap(mAreaList);
         donateBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -122,6 +128,20 @@ public class DonateFragment extends Fragment implements OnMapReadyCallback {
         });
 
         return view;
+    }
+
+    @Override
+    public void onActivityCreated(@Nullable Bundle savedInstanceState) {
+        super.onActivityCreated(savedInstanceState);
+        if(savedInstanceState != null) {
+            mAreaList = savedInstanceState.getParcelableArrayList("areaList");
+        }
+    }
+
+    @Override
+    public void onSaveInstanceState(@NonNull Bundle outState) {
+        super.onSaveInstanceState(outState);
+        outState.putParcelableArrayList("areaList", mAreaList);
     }
 
     // TODO: Rename method, update argument and hook method into UI event
@@ -217,23 +237,7 @@ public class DonateFragment extends Fragment implements OnMapReadyCallback {
                     mAreaList.add(areaDetails);
                     Log.e("Get Data", areaDetails.getName());
                 }
-
-                for(Donate area : mAreaList) {
-                    Log.e("Donate Fragment LAT", String.valueOf(area.getLat()));
-                    Log.e("Donate Fragment LNG", String.valueOf(area.getLng()));
-                    LatLng areaPosition = new LatLng(area.getLat(), area.getLng());
-                    if(map != null) {
-                        if (area.getDonated().equals("yes")) {
-                            map.addMarker(new MarkerOptions().position(areaPosition).title(area.getName()).
-                                    icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_GREEN)));
-                        } else {
-                            map.addMarker(new MarkerOptions().position(areaPosition).title(area.getName()).
-                                    icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_ORANGE)));
-                        }
-                    }
-                }
-
-
+                updateMap(mAreaList);
             }
 
             @Override
@@ -245,6 +249,23 @@ public class DonateFragment extends Fragment implements OnMapReadyCallback {
         });
 
         return mAreaList;
+    }
+
+    private void updateMap(ArrayList<Donate> areaList) {
+        for(Donate area : areaList) {
+            Log.e("Donate Fragment LAT", String.valueOf(area.getLat()));
+            Log.e("Donate Fragment LNG", String.valueOf(area.getLng()));
+            LatLng areaPosition = new LatLng(area.getLat(), area.getLng());
+            if(map != null) {
+                if (area.getDonated().equals("yes")) {
+                    map.addMarker(new MarkerOptions().position(areaPosition).title(area.getName()).
+                            icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_GREEN)));
+                } else {
+                    map.addMarker(new MarkerOptions().position(areaPosition).title(area.getName()).
+                            icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_ORANGE)));
+                }
+            }
+        }
     }
 
 

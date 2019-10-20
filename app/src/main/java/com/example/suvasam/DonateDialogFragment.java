@@ -32,7 +32,12 @@ public class DonateDialogFragment extends DialogFragment {
         View view = inflater.inflate(R.layout.fragment_donate_dialog, container, false);
         final LinearLayout checkBoxLayout = view.findViewById(R.id.checkBoxCollection);
         Button add = view.findViewById(R.id.btnAdd);
-         mDonateList = getArguments().getParcelableArrayList("areaList");
+        if(savedInstanceState == null) {
+            mDonateList = getArguments().getParcelableArrayList("areaList");
+        } else {
+            mDonateList = savedInstanceState.getParcelableArrayList("areaList");
+        }
+
          Log.e("Dialog Frag", "Inside Create View"+ mDonateList.size());
         for(Donate plant : mDonateList) {
             Log.e("Dialog Frag", "Inside Create View For Loop");
@@ -81,5 +86,15 @@ public class DonateDialogFragment extends DialogFragment {
         return view;
     }
 
+    @Override
+    public void onActivityCreated(@Nullable Bundle savedInstanceState) {
+        super.onActivityCreated(savedInstanceState);
+        mDonateList = savedInstanceState.getParcelableArrayList("areaList");
+    }
 
+    @Override
+    public void onSaveInstanceState(@NonNull Bundle outState) {
+        super.onSaveInstanceState(outState);
+        outState.putParcelableArrayList("areaList", mDonateList);
+    }
 }

@@ -5,6 +5,7 @@ import android.net.Uri;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -51,6 +52,7 @@ public class EventsFragment extends Fragment {
     private EventListAdapter mAdapter;
     private OnFragmentInteractionListener mListener;
 
+    ArrayList<Events> mEventsList;
     public EventsFragment() {
         // Required empty public constructor
     }
@@ -87,27 +89,30 @@ public class EventsFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_events, container, false);
+
+
+        return view;
+    }
+
+    @Override
+    public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
+        Log.e("EVENT FRAG", "Inside onViewCreated");
+        super.onViewCreated(view, savedInstanceState);
         mRecyclerView = view.findViewById(R.id.recyclerview);
-        ArrayList<Events> mEventsList = fetchDataFromFirebase();
-//
-//        LinkedList<String> mEventList = new LinkedList<>();
-//        mEventList.add("apple");
-//        mEventList.add("apple1");
-//        mEventList.add("apple2");
-//        mEventList.add("apple3");
-//        mEventList.add("apple4");
-//        mEventList.add("apple5");
-//        mEventList.add("apple6");
-//        mEventList.add("apple7");
-//        mEventList.add("apple8");
+        if(savedInstanceState == null) {
+            Log.e("EVENT FRAG", "Inside if onViewCreated");
+            mEventsList = fetchDataFromFirebase();
+        } else {
+            Log.e("EVENT FRAG", "Inside else onViewCreated");
+            mEventsList = savedInstanceState.getParcelableArrayList("eventList");
+        }
+
 
         mAdapter = new EventListAdapter(getContext(), mEventsList);
         mRecyclerView.setAdapter(mAdapter);
         mRecyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
         // Inflate the layout for this fragment
 
-
-        return view;
     }
 
     // TODO: Rename method, update argument and hook method into UI event
@@ -174,5 +179,20 @@ public class EventsFragment extends Fragment {
     public interface OnFragmentInteractionListener {
         // TODO: Update argument type and name
         void onFragmentInteraction(Uri uri);
+    }
+
+    @Override
+    public void onActivityCreated(@Nullable Bundle savedInstanceState) {
+        super.onActivityCreated(savedInstanceState);
+        if(savedInstanceState != null) {
+            mEventsList = savedInstanceState.getParcelableArrayList("eventList");
+        }
+    }
+
+    @Override
+    public void onSaveInstanceState(@NonNull Bundle outState) {
+        Log.e("EVENT FRAG", "Inside onSaveInstanceState");
+        super.onSaveInstanceState(outState);
+        outState.putParcelableArrayList("eventList", mEventsList);
     }
 }
