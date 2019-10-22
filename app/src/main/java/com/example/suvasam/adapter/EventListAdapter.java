@@ -93,6 +93,6 @@ public class EventListAdapter extends
 
     @Override
     public int getItemCount() {
-        return mEventList.size();
+        return (mEventList == null)? 0 : mEventList.size();
     }
 }

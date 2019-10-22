@@ -52,7 +52,7 @@ public class EventsFragment extends Fragment {
     private EventListAdapter mAdapter;
     private OnFragmentInteractionListener mListener;
 
-    ArrayList<Events> mEventsList;
+    ArrayList<Events> mEventsList = new ArrayList<>();
     public EventsFragment() {
         // Required empty public constructor
     }
@@ -78,6 +78,7 @@ public class EventsFragment extends Fragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        Log.e("EVENT FRAG", "Inside if ONCREATE");
         if (getArguments() != null) {
             mParam1 = getArguments().getString(ARG_PARAM1);
             mParam2 = getArguments().getString(ARG_PARAM2);
@@ -89,7 +90,31 @@ public class EventsFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_events, container, false);
+        if(savedInstanceState == null) {
+            Log.e("EVENT FRAG", "Inside if onViewCreated");
+            //int id, String name, String imageUrl, String description, String date, Boolean fav
+            mEventsList.add(new Events(5, "name", "tttt", "tttt", "ttt", true));
+            mEventsList.add(new Events(6, "name", "tttt", "tttt", "ttt", true));
 
+            fetchDataFromFirebase();
+        } else {
+            Log.e("EVENT FRAG", "Inside else onViewCreated");
+            mEventsList = savedInstanceState.getParcelableArrayList("eventList");
+        }
+
+//        mRecyclerView = view.findViewById(R.id.recyclerview);
+//        if(savedInstanceState == null) {
+//            Log.e("EVENT FRAG", "Inside if ON CREATE VIEW");
+//            fetchDataFromFirebase();
+//        } else {
+//            Log.e("EVENT FRAG", "Inside else ON CREATE VIEW");
+//            mEventsList = savedInstanceState.getParcelableArrayList("eventList");
+//        }
+//
+//
+//        mAdapter = new EventListAdapter(getContext(), mEventsList);
+//        mRecyclerView.setAdapter(mAdapter);
+//        mRecyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
 
         return view;
     }
@@ -99,18 +124,12 @@ public class EventsFragment extends Fragment {
         Log.e("EVENT FRAG", "Inside onViewCreated");
         super.onViewCreated(view, savedInstanceState);
         mRecyclerView = view.findViewById(R.id.recyclerview);
-        if(savedInstanceState == null) {
-            Log.e("EVENT FRAG", "Inside if onViewCreated");
-            mEventsList = fetchDataFromFirebase();
-        } else {
-            Log.e("EVENT FRAG", "Inside else onViewCreated");
-            mEventsList = savedInstanceState.getParcelableArrayList("eventList");
+
+        if(savedInstanceState != null) {
+            mAdapter = new EventListAdapter(getContext(), mEventsList);
+            mRecyclerView.setAdapter(mAdapter);
+            mRecyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
         }
-
-
-        mAdapter = new EventListAdapter(getContext(), mEventsList);
-        mRecyclerView.setAdapter(mAdapter);
-        mRecyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
         // Inflate the layout for this fragment
 
     }
@@ -122,25 +141,25 @@ public class EventsFragment extends Fragment {
         }
     }
 
-    @Override
-    public void onAttach(Context context) {
-        super.onAttach(context);
-        mContext = context;
-        if (context instanceof OnFragmentInteractionListener) {
-            mListener = (OnFragmentInteractionListener) context;
-        } else {
-            throw new RuntimeException(context.toString()
-                    + " must implement OnFragmentInteractionListener");
-        }
-    }
-
-    @Override
-    public void onDetach() {
-        super.onDetach();
-
-        mListener = null;
-    }
-    public  ArrayList<Events> fetchDataFromFirebase() {
+//    @Override
+//    public void onAttach(Context context) {
+//        super.onAttach(context);
+//        mContext = context;
+//        if (context instanceof OnFragmentInteractionListener) {
+//            mListener = (OnFragmentInteractionListener) context;
+//        } else {
+//            throw new RuntimeException(context.toString()
+//                    + " must implement OnFragmentInteractionListener");
+//        }
+//    }
+//
+//    @Override
+//    public void onDetach() {
+//        super.onDetach();
+//
+//        mListener = null;
+//    }
+    public void fetchDataFromFirebase() {
         final ArrayList<Events> eventsList = new ArrayList<>();
         FirebaseDatabase database = FirebaseDatabase.getInstance();
         DatabaseReference ref = database.getReference();
@@ -151,12 +170,15 @@ public class EventsFragment extends Fragment {
                 Log.e("Count", ""+dataSnapshot.getChildrenCount());
                 for(DataSnapshot postSnapshot: dataSnapshot.getChildren()) {
                     Events events = postSnapshot.getValue(Events.class);
-                    eventsList.add(events);
+                    mEventsList.add(events);
                     Log.e("Get Data", events.name);
                 }
+                mAdapter = new EventListAdapter(getContext(), mEventsList);
+                mRecyclerView.setAdapter(mAdapter);
+                mRecyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
                 Log.e("SETTING WIDGET", "Setting Data to Widget");
-                SuvasamEventWidget.setEvents(eventsList);
-                WidgetUpdateIntentService.startAddWidgetData( getContext(), eventsList);
+                SuvasamEventWidget.setEvents(mEventsList);
+                WidgetUpdateIntentService.startAddWidgetData( getContext(), mEventsList);
             }
 
             @Override
@@ -164,7 +186,6 @@ public class EventsFragment extends Fragment {
 
             }
         });
-        return eventsList;
     }
     /**
      * This interface must be implemented by activities that contain this

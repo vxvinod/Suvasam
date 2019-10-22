@@ -67,7 +67,9 @@ public class DonateConfirmationFragment extends DialogFragment {
     @Override
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
-        mDonateList = savedInstanceState.getParcelableArrayList("areaList");
+        if(savedInstanceState !=null) {
+            mDonateList = savedInstanceState.getParcelableArrayList("areaList");
+        }
     }
 
     @Override

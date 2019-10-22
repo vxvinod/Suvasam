@@ -102,7 +102,7 @@ public class DonateFragment extends Fragment implements OnMapReadyCallback {
             mAreaList = savedInstanceState.getParcelableArrayList("areaList");
         }
         View view =  inflater.inflate(R.layout.fragment_donate, container, false);
-        SupportMapFragment mapFragment = (SupportMapFragment) getChildFragmentManager().findFragmentById(R.id.map);
+        SupportMapFragment mapFragment = (SupportMapFragment) getFragmentManager().findFragmentById(R.id.map);
         donateBtn = view.findViewById(R.id.donateBtn);
         if(mapFragment == null) {
             FragmentManager fm = getFragmentManager();
@@ -116,9 +116,10 @@ public class DonateFragment extends Fragment implements OnMapReadyCallback {
         donateBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                mAreaList = fetchDataFromFirebase();
+               // mAreaList = fetchDataFromFirebase();
                 DonateDialogFragment dialogFragment = new DonateDialogFragment();
                 Bundle bundle = new Bundle();
+                Log.e("Donate Dial Frag", String.valueOf(mAreaList.size()));
                 bundle.putParcelableArrayList("areaList", mAreaList);
                 dialogFragment.setArguments(bundle);
                 FragmentTransaction ft = getFragmentManager().beginTransaction();
@@ -135,6 +136,7 @@ public class DonateFragment extends Fragment implements OnMapReadyCallback {
         super.onActivityCreated(savedInstanceState);
         if(savedInstanceState != null) {
             mAreaList = savedInstanceState.getParcelableArrayList("areaList");
+
         }
     }
 
@@ -159,22 +161,22 @@ public class DonateFragment extends Fragment implements OnMapReadyCallback {
 //        }
 //    }
 
-    @Override
-    public void onAttach(Context context) {
-        super.onAttach(context);
-        if (context instanceof OnFragmentInteractionListener) {
-            mListener = (OnFragmentInteractionListener) context;
-        } else {
-            throw new RuntimeException(context.toString()
-                    + " must implement OnFragmentInteractionListener");
-        }
-    }
-
-    @Override
-    public void onDetach() {
-        super.onDetach();
-        mListener = null;
-    }
+//    @Override
+//    public void onAttach(Context context) {
+//        super.onAttach(context);
+//        if (context instanceof OnFragmentInteractionListener) {
+//            mListener = (OnFragmentInteractionListener) context;
+//        } else {
+//            throw new RuntimeException(context.toString()
+//                    + " must implement OnFragmentInteractionListener");
+//        }
+//    }
+//
+//    @Override
+//    public void onDetach() {
+//        super.onDetach();
+//        mListener = null;
+//    }
 
     @Override
     public void onMapReady(GoogleMap googleMap) {

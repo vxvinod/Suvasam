@@ -77,6 +77,7 @@ public class DonateDialogFragment extends DialogFragment {
                 FragmentTransaction ft = getFragmentManager().beginTransaction();
                 dismiss();
                 ft.replace(R.id.donateFrameLayout, confirmationFragment);
+                ft.addToBackStack(null);
                 ft.commit();
                 checkBoxLayout.removeAllViews();
                 Toast.makeText(getContext(), String.valueOf(totalDonationAmt), Toast.LENGTH_LONG ).show();
@@ -89,7 +90,9 @@ public class DonateDialogFragment extends DialogFragment {
     @Override
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
-        mDonateList = savedInstanceState.getParcelableArrayList("areaList");
+        if(savedInstanceState != null) {
+            mDonateList = savedInstanceState.getParcelableArrayList("areaList");
+        }
     }
 
     @Override

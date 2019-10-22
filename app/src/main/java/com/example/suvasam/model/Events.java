@@ -11,10 +11,10 @@ public class Events implements Parcelable {
     public String description;
     public Boolean fav;
 
-    public Events(String name, String date) {
-        this.name = name;
-        this.date = date;
-    }
+//    public Events(String name, String date) {
+//        this.name = name;
+//        this.date = date;
+//    }
 
     protected Events(Parcel in) {
         id = in.readInt();
