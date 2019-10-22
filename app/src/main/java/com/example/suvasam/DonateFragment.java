@@ -116,7 +116,7 @@ public class DonateFragment extends Fragment implements OnMapReadyCallback {
         donateBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-               // mAreaList = fetchDataFromFirebase();
+                mAreaList = fetchDataFromFirebase();
                 DonateDialogFragment dialogFragment = new DonateDialogFragment();
                 Bundle bundle = new Bundle();
                 Log.e("Donate Dial Frag", String.valueOf(mAreaList.size()));

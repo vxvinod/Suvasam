@@ -9,6 +9,7 @@ import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import androidx.viewpager2.widget.ViewPager2;
 
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -16,7 +17,11 @@ import android.view.ViewGroup;
 import com.example.suvasam.adapter.AwarenessViewPagerAdapter;
 import com.example.suvasam.database.AwarenessFirebase;
 import com.example.suvasam.model.Awareness;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -87,9 +92,10 @@ public class AwarenessFragment extends Fragment {
             }
         });
         if(savedInstanceState == null) {
-            awarenessList = AwarenessFirebase.fetchDataFromFirebase();
+            awarenessList = fetchDataFromFirebase();
         } else {
             awarenessList = savedInstanceState.getParcelableArrayList("awarenessList");
+            viewPager2.setAdapter(new AwarenessViewPagerAdapter(getContext(), awarenessList, viewPager2));
         }
 //
 //        List<String> list = new ArrayList<>();
@@ -98,7 +104,7 @@ public class AwarenessFragment extends Fragment {
 //        list.add("Third Screen");
 //        list.add("Fourth Screen");
 
-        viewPager2.setAdapter(new AwarenessViewPagerAdapter(getContext(), awarenessList, viewPager2));
+
 
         return view;
     }
@@ -124,22 +130,22 @@ public class AwarenessFragment extends Fragment {
         }
     }
 
-    @Override
-    public void onAttach(Context context) {
-        super.onAttach(context);
-        if (context instanceof OnFragmentInteractionListener) {
-            mListener = (OnFragmentInteractionListener) context;
-        } else {
-            throw new RuntimeException(context.toString()
-                    + " must implement OnFragmentInteractionListener");
-        }
-    }
+//    @Override
+//    public void onAttach(Context context) {
+//        super.onAttach(context);
+//        if (context instanceof OnFragmentInteractionListener) {
+//            mListener = (OnFragmentInteractionListener) context;
+//        } else {
+//            throw new RuntimeException(context.toString()
+//                    + " must implement OnFragmentInteractionListener");
+//        }
+//    }
 
-    @Override
-    public void onDetach() {
-        super.onDetach();
-        mListener = null;
-    }
+//    @Override
+//    public void onDetach() {
+//        super.onDetach();
+//        mListener = null;
+//    }
 
 
 
@@ -156,5 +162,29 @@ public class AwarenessFragment extends Fragment {
     public interface OnFragmentInteractionListener {
         // TODO: Update argument type and name
         void onFragmentInteraction(Uri uri);
+    }
+
+    public  ArrayList<Awareness> fetchDataFromFirebase() {
+        final ArrayList<Awareness> awarenessesList = new ArrayList<>();
+        FirebaseDatabase database = FirebaseDatabase.getInstance();
+        DatabaseReference ref = database.getReference();
+        ref.child("awareness").addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                Log.e("Count", ""+dataSnapshot.getChildrenCount());
+                for(DataSnapshot postSnapshot: dataSnapshot.getChildren()) {
+                    Awareness awareness = postSnapshot.getValue(Awareness.class);
+                    awarenessesList.add(awareness);
+                    Log.e("Get Data", awareness.getTitle());
+                    viewPager2.setAdapter(new AwarenessViewPagerAdapter(getContext(), awarenessList, viewPager2));
+                }
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+
+            }
+        });
+        return awarenessesList;
     }
 }

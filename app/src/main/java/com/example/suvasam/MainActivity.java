@@ -141,7 +141,7 @@ public class MainActivity extends AppCompatActivity
 //                    active = fragment2;
                     return true;
                 case R.id.navigation_notifications:
-                  //  viewPager.setCurrentItem(2);
+                    viewPager.setCurrentItem(2);
                     //                    if(mInterstitialAd.isLoaded()) {
 //                        mInterstitialAd.show();
 //                    }
@@ -216,7 +216,7 @@ public class MainActivity extends AppCompatActivity
         adapter.addFragment(new DonateFragment(), "donate");
         adapter.addFragment(new EventsFragment(), "event");
 
-        //adapter.addFragment(new AwarenessFragment(), "awareness");
+        adapter.addFragment(new AwarenessFragment(), "awareness");
         viewPager.setAdapter(adapter);
 
         viewPager.addOnPageChangeListener(new ViewPager.OnPageChangeListener() {
