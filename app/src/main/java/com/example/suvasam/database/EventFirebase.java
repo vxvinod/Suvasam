@@ -7,6 +7,7 @@ import androidx.annotation.NonNull;
 import com.example.suvasam.model.Events;
 import com.example.suvasam.widgets.SuvasamEventWidget;
 import com.example.suvasam.widgets.WidgetUpdateIntentService;
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
@@ -49,7 +50,12 @@ public class EventFirebase {
     public static void updateFavInEvents(int eventId, boolean fav){
         FirebaseDatabase database = FirebaseDatabase.getInstance();
         DatabaseReference ref = database.getReference();
-        ref.child("events").child(String.valueOf(eventId)).child("fav").setValue(fav);
+        ref.child("events").child(String.valueOf(eventId)).child("fav"). setValue(fav).addOnSuccessListener(new OnSuccessListener<Void>() {
+            @Override
+            public void onSuccess(Void aVoid) {
+
+            }
+        });
     }
 
 

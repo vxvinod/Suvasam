@@ -9,11 +9,17 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.suvasam.R;
 import com.example.suvasam.database.EventFirebase;
 import com.example.suvasam.model.Events;
+import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.firebase.database.ChildEventListener;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.squareup.picasso.Picasso;
 
@@ -22,7 +28,7 @@ import java.util.ArrayList;
 public class EventListAdapter extends
         RecyclerView.Adapter<EventListAdapter.EventViewHolder>
 {
-    private final ArrayList<Events> mEventList;
+    private ArrayList<Events> mEventList;
     private LayoutInflater mInflater;
     class EventViewHolder extends RecyclerView.ViewHolder {
 
@@ -41,12 +47,23 @@ public class EventListAdapter extends
             mEventDate = itemView.findViewById(R.id.eventDate);
             mFav = itemView.findViewById(R.id.eventIv);
             this.mAdapter = adapter;
+
+        }
+
+
+        public void setFav(int imgSrc) {
+            mFav.setImageResource(imgSrc);
         }
     }
 
-    public EventListAdapter(Context context , ArrayList<Events> mEventList) {
+    public EventListAdapter(Context context ) {
         mInflater = LayoutInflater.from(context);
-        this.mEventList = mEventList;
+        //this.mEventList = mEventList;
+    }
+
+    public  void setData(ArrayList<Events> events) {
+        this.mEventList = events;
+        notifyDataSetChanged();
     }
 
     @NonNull
@@ -77,22 +94,43 @@ public class EventListAdapter extends
             @Override
             public void onClick(View v) {
                 Log.d("Fav Button Clicked", "favoutite added");
-                boolean fav = (events.fav == true) ? false : true;
-                updateFavInFirebase(position, fav);
-                int imgSrc = (fav == true) ? R.drawable.ic_start_on : R.drawable.ic_start_off;
-                holder.mFav.setImageResource(imgSrc);
+                final boolean fav = (events.fav == true) ? false : true;
+                Log.e("Fav Button Clicked ", "Going to Update "+fav);
+//                int imgSrc = (fav == true) ? R.drawable.ic_start_on : R.drawable.ic_start_off;
+//                holder.mFav.setImageResource(imgSrc);
+                updateFavInEvents(holder.mFav , position, fav);
+                //notifyDataSetChanged();
+
+
 
             }
         });
     }
 
-    public void updateFavInFirebase(int position, boolean fav) {
-        EventFirebase.updateFavInEvents(position, fav);
-        //notifyDataSetChanged();
-    }
+
+
+//    public void updateFavInFirebase(int position, boolean fav) {
+//        updateFavInEvents(position, fav);
+//        //notifyDataSetChanged();
+//    }
 
     @Override
     public int getItemCount() {
         return (mEventList == null)? 0 : mEventList.size();
+    }
+
+    public void updateFavInEvents(final ImageView favView, final int eventId, final boolean fav){
+        FirebaseDatabase database = FirebaseDatabase.getInstance();
+        DatabaseReference ref = database.getReference();
+        ref.child("events").child(String.valueOf(eventId)).child("fav").setValue(fav)
+                .addOnSuccessListener(new OnSuccessListener<Void>() {
+                    @Override
+                    public void onSuccess(Void aVoid) {
+                        Log.e("Fav Button Clicked ", "Updated Successfully "+fav);
+                        int imgSrc = (fav == true) ? R.drawable.ic_start_on : R.drawable.ic_start_off;
+                        favView.setImageResource(imgSrc);
+//                         notifyItemChanged(eventId);
+                    }
+                });
     }
 }

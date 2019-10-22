@@ -93,10 +93,9 @@ public class EventsFragment extends Fragment {
         if(savedInstanceState == null) {
             Log.e("EVENT FRAG", "Inside if onViewCreated");
             //int id, String name, String imageUrl, String description, String date, Boolean fav
-            mEventsList.add(new Events(5, "name", "tttt", "tttt", "ttt", true));
-            mEventsList.add(new Events(6, "name", "tttt", "tttt", "ttt", true));
 
-            fetchDataFromFirebase();
+            mEventsList = fetchDataFromFirebase();
+
         } else {
             Log.e("EVENT FRAG", "Inside else onViewCreated");
             mEventsList = savedInstanceState.getParcelableArrayList("eventList");
@@ -124,12 +123,17 @@ public class EventsFragment extends Fragment {
         Log.e("EVENT FRAG", "Inside onViewCreated");
         super.onViewCreated(view, savedInstanceState);
         mRecyclerView = view.findViewById(R.id.recyclerview);
-
+        mAdapter = new EventListAdapter(getContext());
+        mRecyclerView.setAdapter(mAdapter);
+        mRecyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
         if(savedInstanceState != null) {
-            mAdapter = new EventListAdapter(getContext(), mEventsList);
+            mAdapter = new EventListAdapter(getContext());
             mRecyclerView.setAdapter(mAdapter);
+            mAdapter.setData(mEventsList);
             mRecyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
         }
+
+
         // Inflate the layout for this fragment
 
     }
@@ -159,33 +163,40 @@ public class EventsFragment extends Fragment {
 //
 //        mListener = null;
 //    }
-    public void fetchDataFromFirebase() {
-        final ArrayList<Events> eventsList = new ArrayList<>();
+    public ArrayList<Events> fetchDataFromFirebase() {
+        final ArrayList<Events> eventsList = new ArrayList<>();;
         FirebaseDatabase database = FirebaseDatabase.getInstance();
         DatabaseReference ref = database.getReference();
 
         ref.child("events").addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                eventsList.clear();
                 Log.e("Count", ""+dataSnapshot.getChildrenCount());
                 for(DataSnapshot postSnapshot: dataSnapshot.getChildren()) {
                     Events events = postSnapshot.getValue(Events.class);
-                    mEventsList.add(events);
+                    eventsList.add(events);
+                    mAdapter.setData(eventsList);
+                    mAdapter.notifyDataSetChanged();
                     Log.e("Get Data", events.name);
                 }
-                mAdapter = new EventListAdapter(getContext(), mEventsList);
-                mRecyclerView.setAdapter(mAdapter);
-                mRecyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
+//                mAdapter = new EventListAdapter(getContext(), eventsList);
+//                mRecyclerView.setAdapter(mAdapter);
+//                mRecyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
+
                 Log.e("SETTING WIDGET", "Setting Data to Widget");
-                SuvasamEventWidget.setEvents(mEventsList);
-                WidgetUpdateIntentService.startAddWidgetData( getContext(), mEventsList);
+                SuvasamEventWidget.setEvents(eventsList);
+                WidgetUpdateIntentService.startAddWidgetData( getContext(), eventsList);
             }
+
+
 
             @Override
             public void onCancelled(@NonNull DatabaseError databaseError) {
 
             }
         });
+        return eventsList;
     }
     /**
      * This interface must be implemented by activities that contain this
