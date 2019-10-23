@@ -6,6 +6,7 @@ import android.os.Bundle;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
@@ -14,6 +15,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Toast;
 
 import com.example.suvasam.database.DonateFirebase;
 import com.example.suvasam.model.Donate;
@@ -88,8 +90,6 @@ public class DonateFragment extends Fragment implements OnMapReadyCallback {
             mParam2 = getArguments().getString(ARG_PARAM2);
         }
 
-
-
     }
 
     @Override
@@ -117,18 +117,34 @@ public class DonateFragment extends Fragment implements OnMapReadyCallback {
             @Override
             public void onClick(View v) {
                 mAreaList = fetchDataFromFirebase();
-                DonateDialogFragment dialogFragment = new DonateDialogFragment();
-                Bundle bundle = new Bundle();
-                Log.e("Donate Dial Frag", String.valueOf(mAreaList.size()));
-                bundle.putParcelableArrayList("areaList", mAreaList);
-                dialogFragment.setArguments(bundle);
-                FragmentTransaction ft = getFragmentManager().beginTransaction();
-                ft.replace(R.id.donateFrameLayout, dialogFragment);
-                ft.commit();
+                if(checkFavPresent(mAreaList)) {
+                    DonateDialogFragment dialogFragment = new DonateDialogFragment();
+                    Bundle bundle = new Bundle();
+                    Log.e("Donate Dial Frag", String.valueOf(mAreaList.size()));
+                    bundle.putParcelableArrayList("areaList", mAreaList);
+                    dialogFragment.setArguments(bundle);
+                    FragmentTransaction ft = getFragmentManager().beginTransaction();
+                    ft.replace(R.id.donateFrameLayout, dialogFragment);
+                    ft.commit();
+                } else {
+                    Toast.makeText(getContext(), "Madurai Made Green, All Plants have been donated",
+                                    Toast.LENGTH_LONG).show();
+                }
             }
         });
 
         return view;
+    }
+
+    public boolean checkFavPresent(ArrayList<Donate> areaList) {
+        boolean isFavPresent = false;
+        for(Donate area: areaList) {
+            if(area.getDonated() == "yes"){
+                isFavPresent = true;
+                return isFavPresent;
+            }
+        }
+        return isFavPresent;
     }
 
     @Override

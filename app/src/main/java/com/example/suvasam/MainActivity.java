@@ -23,6 +23,7 @@ import com.google.firebase.database.ValueEventListener;
 
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.Toolbar;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
@@ -59,6 +60,7 @@ public class MainActivity extends AppCompatActivity
             switch (item.getItemId()) {
                 case R.id.navigation_home:
                     Log.e("MAIN ACTIVITY", "NAV HOME SELECTED");
+                    getSupportActionBar().show();
                     viewPager.setCurrentItem(0);
 
                //   fetchDataFromFirebase();
@@ -127,6 +129,7 @@ public class MainActivity extends AppCompatActivity
 
                     return true;
                 case R.id.navigation_dashboard:
+                    getSupportActionBar().show();
                     Log.e("MAIN ACTIVITY", "NAV DASHBOARD SELECTED");
                     viewPager.setCurrentItem(1);
 //
@@ -141,6 +144,7 @@ public class MainActivity extends AppCompatActivity
 //                    active = fragment2;
                     return true;
                 case R.id.navigation_notifications:
+                    getSupportActionBar().hide();
                     viewPager.setCurrentItem(2);
                     //                    if(mInterstitialAd.isLoaded()) {
 //                        mInterstitialAd.show();
@@ -164,7 +168,11 @@ public class MainActivity extends AppCompatActivity
         //fm = getSupportFragmentManager();
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        getSupportActionBar().hide();
+        //getSupportActionBar().hide();
+        Toolbar mActionBarToolbar = (Toolbar) findViewById(R.id.toolbar);
+        setSupportActionBar(mActionBarToolbar);
+        mActionBarToolbar.setTitle("Suvasam");
+
 //        if(savedInstanceState != null) {
 //            Log.e("MAIN ACTIVITY", "ACTIVE FRAG IS null");
 //            fragment1 = (DonateFragment) getSupportFragmentManager().findFragmentByTag("1");

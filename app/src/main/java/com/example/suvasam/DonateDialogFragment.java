@@ -44,7 +44,7 @@ public class DonateDialogFragment extends DialogFragment {
             if(plant.getDonated().equals("no")) {
                 CheckBox ch = new CheckBox(getContext());
                 Log.e("Dialog frag", plant.getName() + " " + plant.getPlantsCount() + " " + plant.getDonationAmt());
-                ch.setText(plant.getName() + " " + plant.getPlantsCount() + " " + plant.getDonationAmt());
+                ch.setText(plant.getName() + " " + plant.getPlantsCount() + " plants, costs " + plant.getDonationAmt()+ "rupees");
                 ch.setId(plant.getId());
                 checkBoxLayout.addView(ch);
             }

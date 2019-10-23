@@ -6,6 +6,7 @@ import android.os.Bundle;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.Fragment;
 import androidx.viewpager2.widget.ViewPager2;
 
@@ -94,6 +95,7 @@ public class AwarenessFragment extends Fragment {
         if(savedInstanceState == null) {
             awarenessList = fetchDataFromFirebase();
         } else {
+            ((AppCompatActivity) getActivity()).getSupportActionBar().hide();
             awarenessList = savedInstanceState.getParcelableArrayList("awarenessList");
             viewPager2.setAdapter(new AwarenessViewPagerAdapter(getContext(), awarenessList, viewPager2));
         }
