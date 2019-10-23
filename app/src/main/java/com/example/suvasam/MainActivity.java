@@ -164,7 +164,7 @@ public class MainActivity extends AppCompatActivity
         //fm = getSupportFragmentManager();
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-
+        getSupportActionBar().hide();
 //        if(savedInstanceState != null) {
 //            Log.e("MAIN ACTIVITY", "ACTIVE FRAG IS null");
 //            fragment1 = (DonateFragment) getSupportFragmentManager().findFragmentByTag("1");

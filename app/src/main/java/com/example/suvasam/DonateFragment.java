@@ -104,13 +104,13 @@ public class DonateFragment extends Fragment implements OnMapReadyCallback {
         View view =  inflater.inflate(R.layout.fragment_donate, container, false);
         SupportMapFragment mapFragment = (SupportMapFragment) getFragmentManager().findFragmentById(R.id.map);
         donateBtn = view.findViewById(R.id.donateBtn);
-        if(mapFragment == null) {
+        //if(mapFragment == null) {
             FragmentManager fm = getFragmentManager();
             FragmentTransaction ft = fm.beginTransaction();
             mapFragment = SupportMapFragment.newInstance();
             ft.replace(R.id.map, mapFragment).commit();
 
-        }
+        //}
         mapFragment.getMapAsync(this);
         updateMap(mAreaList);
         donateBtn.setOnClickListener(new View.OnClickListener() {
@@ -143,6 +143,7 @@ public class DonateFragment extends Fragment implements OnMapReadyCallback {
     @Override
     public void onSaveInstanceState(@NonNull Bundle outState) {
         super.onSaveInstanceState(outState);
+        Log.e("DONATE FRAG", "SAVE INSTANCE area list size"+mAreaList.size());
         outState.putParcelableArrayList("areaList", mAreaList);
     }
 
@@ -208,6 +209,11 @@ public class DonateFragment extends Fragment implements OnMapReadyCallback {
             map.moveCamera(CameraUpdateFactory.newLatLngBounds(bounds, width, height, padding));
 
             map.setMinZoomPreference(map.getCameraPosition().zoom);
+            Log.e("Inside MapOnReady", String.valueOf(mAreaList.size()));
+            if(!mAreaList.isEmpty()) {
+                updateMap(mAreaList);
+            }
+
     }
 
     /**
