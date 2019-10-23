@@ -117,7 +117,7 @@ public class DonateFragment extends Fragment implements OnMapReadyCallback {
             @Override
             public void onClick(View v) {
                 mAreaList = fetchDataFromFirebase();
-                if(checkFavPresent(mAreaList)) {
+                if(!checkDonatePlantPresent(mAreaList)) {
                     DonateDialogFragment dialogFragment = new DonateDialogFragment();
                     Bundle bundle = new Bundle();
                     Log.e("Donate Dial Frag", String.valueOf(mAreaList.size()));
@@ -136,7 +136,7 @@ public class DonateFragment extends Fragment implements OnMapReadyCallback {
         return view;
     }
 
-    public boolean checkFavPresent(ArrayList<Donate> areaList) {
+    public boolean checkDonatePlantPresent(ArrayList<Donate> areaList) {
         boolean isFavPresent = false;
         for(Donate area: areaList) {
             if(area.getDonated() == "yes"){
