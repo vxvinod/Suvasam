@@ -96,23 +96,12 @@ public class EventListAdapter extends
                 Log.d("Fav Button Clicked", "favoutite added");
                 final boolean fav = (events.fav == true) ? false : true;
                 Log.e("Fav Button Clicked ", "Going to Update "+fav);
-//                int imgSrc = (fav == true) ? R.drawable.ic_start_on : R.drawable.ic_start_off;
-//                holder.mFav.setImageResource(imgSrc);
                 updateFavInEvents(holder.mFav , position, fav);
-                //notifyDataSetChanged();
-
-
 
             }
         });
     }
 
-
-
-//    public void updateFavInFirebase(int position, boolean fav) {
-//        updateFavInEvents(position, fav);
-//        //notifyDataSetChanged();
-//    }
 
     @Override
     public int getItemCount() {

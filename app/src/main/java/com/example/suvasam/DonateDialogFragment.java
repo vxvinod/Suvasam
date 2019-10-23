@@ -49,11 +49,7 @@ public class DonateDialogFragment extends DialogFragment {
                 checkBoxLayout.addView(ch);
             }
         }
-//        for(int i = 0; i < 5; i++) {
-//            CheckBox ch = new CheckBox(getContext());
-//            ch.setText("I am Dynamic");
-//            checkBoxLayout.addView(ch);
-//        }
+
         add.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {

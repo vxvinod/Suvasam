@@ -91,31 +91,10 @@ public class EventsFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_events, container, false);
-        if(savedInstanceState == null) {
-            Log.e("EVENT FRAG", "Inside if onViewCreated");
-            //int id, String name, String imageUrl, String description, String date, Boolean fav
-
+        if(savedInstanceState == null)
             mEventsList = fetchDataFromFirebase();
-
-        } else {
-            Log.e("EVENT FRAG", "Inside else onViewCreated");
+         else
             mEventsList = savedInstanceState.getParcelableArrayList("eventList");
-        }
-
-//        mRecyclerView = view.findViewById(R.id.recyclerview);
-//        if(savedInstanceState == null) {
-//            Log.e("EVENT FRAG", "Inside if ON CREATE VIEW");
-//            fetchDataFromFirebase();
-//        } else {
-//            Log.e("EVENT FRAG", "Inside else ON CREATE VIEW");
-//            mEventsList = savedInstanceState.getParcelableArrayList("eventList");
-//        }
-//
-//
-//        mAdapter = new EventListAdapter(getContext(), mEventsList);
-//        mRecyclerView.setAdapter(mAdapter);
-//        mRecyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
-
         return view;
     }
 
@@ -134,9 +113,6 @@ public class EventsFragment extends Fragment {
             mRecyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
         }
 
-
-        // Inflate the layout for this fragment
-
     }
 
     // TODO: Rename method, update argument and hook method into UI event
@@ -146,24 +122,6 @@ public class EventsFragment extends Fragment {
         }
     }
 
-//    @Override
-//    public void onAttach(Context context) {
-//        super.onAttach(context);
-//        mContext = context;
-//        if (context instanceof OnFragmentInteractionListener) {
-//            mListener = (OnFragmentInteractionListener) context;
-//        } else {
-//            throw new RuntimeException(context.toString()
-//                    + " must implement OnFragmentInteractionListener");
-//        }
-//    }
-//
-//    @Override
-//    public void onDetach() {
-//        super.onDetach();
-//
-//        mListener = null;
-//    }
     public ArrayList<Events> fetchDataFromFirebase() {
         final ArrayList<Events> eventsList = new ArrayList<>();;
         FirebaseDatabase database = FirebaseDatabase.getInstance();
@@ -181,17 +139,10 @@ public class EventsFragment extends Fragment {
                     mAdapter.notifyDataSetChanged();
                     Log.e("Get Data", events.name);
                 }
-//                mAdapter = new EventListAdapter(getContext(), eventsList);
-//                mRecyclerView.setAdapter(mAdapter);
-//                mRecyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
-
                 Log.e("SETTING WIDGET", "Setting Data to Widget");
                 SuvasamEventWidget.setEvents(eventsList);
                 WidgetUpdateIntentService.startAddWidgetData( getContext(), eventsList);
             }
-
-
-
             @Override
             public void onCancelled(@NonNull DatabaseError databaseError) {
 

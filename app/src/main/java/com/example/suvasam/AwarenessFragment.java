@@ -99,15 +99,6 @@ public class AwarenessFragment extends Fragment {
             awarenessList = savedInstanceState.getParcelableArrayList("awarenessList");
             viewPager2.setAdapter(new AwarenessViewPagerAdapter(getContext(), awarenessList, viewPager2));
         }
-//
-//        List<String> list = new ArrayList<>();
-//        list.add("First Screen");
-//        list.add("Second Screen");
-//        list.add("Third Screen");
-//        list.add("Fourth Screen");
-
-
-
         return view;
     }
 
@@ -131,23 +122,6 @@ public class AwarenessFragment extends Fragment {
             mListener.onFragmentInteraction(uri);
         }
     }
-
-//    @Override
-//    public void onAttach(Context context) {
-//        super.onAttach(context);
-//        if (context instanceof OnFragmentInteractionListener) {
-//            mListener = (OnFragmentInteractionListener) context;
-//        } else {
-//            throw new RuntimeException(context.toString()
-//                    + " must implement OnFragmentInteractionListener");
-//        }
-//    }
-
-//    @Override
-//    public void onDetach() {
-//        super.onDetach();
-//        mListener = null;
-//    }
 
 
 
