@@ -54,7 +54,7 @@
             android:layout_height="wrap_content"
             android:lineSpacingExtra="8dp"
             android:padding="16dp"
-            android:text="hello"
+            android:text="@string/awareness_sample_desc"
             android:textColor="#0A0A00"
             android:fontFamily="sans-serif"
             android:textSize="18sp" />

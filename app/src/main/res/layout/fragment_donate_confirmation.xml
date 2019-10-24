@@ -18,10 +18,7 @@
         android:layout_height="wrap_content"
         android:layout_margin="16dp"
         android:textStyle="bold"
-        android:text="Thanks for Making Madurai Greener" />
-
-
-
+        android:text="@string/confirm_screen_thanks_msg" />
 
     <LinearLayout
         android:id="@+id/confirmSummaryLayout"
@@ -40,7 +37,7 @@
             android:id="@+id/checkoutBtn"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Proceed To Checkout" />
+            android:text="@string/confirm_screen_checkout_msg" />
 
 
     </LinearLayout>

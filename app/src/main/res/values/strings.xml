@@ -15,4 +15,15 @@
     <string name="admob_app_id">ca-app-pub-6506911315414653~6740738797</string>
     <string name="interstitial_ad_unit_id">ca-app-pub-6506911315414653/6509638653</string>
     <string name="suvasam">Suvasam</string>
+    <string name="favourite">Favourite</string>
+    <string name="event_name">Event Name</string>
+    <string name="event_description">Event Description</string>
+    <string name="event_sample_date">16-May-19</string>
+    <string name="confirm_screen_thanks_msg">Thanks for Making Madurai Greener</string>
+    <string name="confirm_screen_checkout_msg">Proceed To Checkout</string>
+    <string name="donate_screen_title">Donate to Make Madurai Greener</string>
+    <string name="donate_screen_add_btn">Add</string>
+    <string name="awareness_sample_desc">hello</string>
+    <string name="widget_title">Suvasam</string>
+    <string name="widget_sample_data">Sample test</string>
 </resources>

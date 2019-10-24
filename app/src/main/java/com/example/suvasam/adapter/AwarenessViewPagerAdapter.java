@@ -72,6 +72,8 @@ public class AwarenessViewPagerAdapter extends RecyclerView.Adapter<AwarenessVie
 
             }
         });
+        holder.awarenessIv.setContentDescription(awarenessData.getTitle()+" ImageUrl "+
+                                                                    awarenessData.getImageUrl());
       //  holder.relativeLayout.setBackgroundResource(awarenessData.get);
 
         holder.shareBtn.setOnClickListener(new View.OnClickListener() {

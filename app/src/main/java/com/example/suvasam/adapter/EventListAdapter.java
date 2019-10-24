@@ -30,6 +30,7 @@ public class EventListAdapter extends
 {
     private ArrayList<Events> mEventList;
     private LayoutInflater mInflater;
+    Context mContext;
     class EventViewHolder extends RecyclerView.ViewHolder {
 
         public final TextView mEventName;
@@ -58,6 +59,7 @@ public class EventListAdapter extends
 
     public EventListAdapter(Context context ) {
         mInflater = LayoutInflater.from(context);
+        mContext = context;
         //this.mEventList = mEventList;
     }
 
@@ -90,6 +92,8 @@ public class EventListAdapter extends
         }
         Picasso.get().load(events.imageUrl).resize(50,50).
                 centerCrop().error(R.drawable.ic_launcher_background).into(holder.mEventIv);
+        holder.mEventIv.setContentDescription(events.name+ " ImageUrl"+ events.imageUrl);
+        holder.mFav.setContentDescription(mContext.getResources().getString(R.string.favourite));
         holder.mFav.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {

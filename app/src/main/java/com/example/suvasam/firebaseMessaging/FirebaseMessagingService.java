@@ -1,4 +1,4 @@
-package com.example.suvasam.FirebaseMessaging;
+package com.example.suvasam.firebaseMessaging;
 
 import android.app.NotificationManager;
 import android.content.Context;
