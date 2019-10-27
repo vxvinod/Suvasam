@@ -17,6 +17,8 @@ import com.google.firebase.database.FirebaseDatabase;
 
 import java.lang.ref.Reference;
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.zip.Inflater;
 
 import androidx.annotation.NonNull;
@@ -25,24 +27,28 @@ import androidx.fragment.app.DialogFragment;
 
 public class DonateConfirmationFragment extends DialogFragment {
 
-    ArrayList<Donate> mDonateList;
+    HashMap<String, Donate> mDonateList;
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_donate_confirmation, container, false);
         final LinearLayout summaryLayout = view.findViewById(R.id.confSummaryDetails);
         Button checkoutBtn = view.findViewById(R.id.checkoutBtn);
+        Button cancel = view.findViewById(R.id.confirmCancel);
         if(savedInstanceState == null) {
-            mDonateList = getArguments().getParcelableArrayList("selectedAreaList");
+            mDonateList = (HashMap<String, Donate>) getArguments().getSerializable("selectedAreaList");
         } else {
-            mDonateList = savedInstanceState.getParcelableArrayList("areaList");
+            mDonateList = (HashMap<String, Donate>) savedInstanceState.getSerializable("areaList");
         }
         Log.e("Dialog Conf Frag", "Inside Create View"+ mDonateList.size());
-        for(Donate plant : mDonateList) {
+        for(HashMap.Entry<String, Donate>  plant : mDonateList.entrySet()) {
             Log.e("Dialog Conf Frag", "Inside Create View For Loop");
+            Log.e("Dialog Conf Frag", "plant key"+plant.getKey());
+            Log.e("Dialog Conf Frag", "plant class"+plant.getClass());
+            Log.e("Dialog Conf Frag", "plant"+plant.getValue());
             TextView ch = new TextView(getContext());
-            Log.e("Dialog frag", plant.getName()+" " + plant.getPlantsCount() + " "+ plant.getDonationAmt());
-            ch.setText(plant.getName() + " " + plant.getPlantsCount()+ " "+ plant.getDonationAmt());
+            Log.e("Dialog frag", plant.getValue().getName()+" " + plant.getValue().getPlantsCount() + " "+ plant.getValue().getDonationAmt());
+            ch.setText(plant.getValue().getName() + " " + plant.getValue().getPlantsCount()+ " "+ plant.getValue().getDonationAmt());
             summaryLayout.addView(ch);
         }
 
@@ -53,10 +59,17 @@ public class DonateConfirmationFragment extends DialogFragment {
                 Toast.makeText(getContext(), "Payment Done", Toast.LENGTH_LONG).show();
                 FirebaseDatabase db = FirebaseDatabase.getInstance();
                 DatabaseReference ref = db.getReference();
-                for(Donate area : mDonateList) {
-                    ref.child("area").child(String.valueOf(area.getId())).child("donated").setValue("yes");
+                for(Map.Entry<String, Donate> area : mDonateList.entrySet()) {
+                    ref.child("area").child(String.valueOf(area.getValue().getId())).child("donated").setValue("yes");
                 }
 
+            }
+        });
+
+        cancel.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                dismiss();
             }
         });
 
@@ -68,14 +81,14 @@ public class DonateConfirmationFragment extends DialogFragment {
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
         if(savedInstanceState !=null) {
-            mDonateList = savedInstanceState.getParcelableArrayList("areaList");
+            mDonateList = (HashMap<String, Donate>) savedInstanceState.getSerializable("areaList");
         }
     }
 
     @Override
     public void onSaveInstanceState(@NonNull Bundle outState) {
         super.onSaveInstanceState(outState);
-        outState.putParcelableArrayList("areaList", mDonateList);
+        outState.putSerializable("areaList", mDonateList);
     }
 
 }

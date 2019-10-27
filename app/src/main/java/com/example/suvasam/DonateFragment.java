@@ -11,6 +11,7 @@ import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
 
+import android.os.Parcelable;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -36,6 +37,9 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Map;
 
 
 /**
@@ -52,7 +56,7 @@ public class DonateFragment extends Fragment implements OnMapReadyCallback {
     private static final String ARG_PARAM1 = "param1";
     private static final String ARG_PARAM2 = "param2";
      GoogleMap map;
-    ArrayList<Donate> mAreaList;
+    HashMap<String, Donate> mAreaList;
     // TODO: Rename and change types of parameters
     private String mParam1;
     private String mParam2;
@@ -99,7 +103,7 @@ public class DonateFragment extends Fragment implements OnMapReadyCallback {
         if(savedInstanceState == null) {
             mAreaList = fetchDataFromFirebase();
         } else {
-            mAreaList = savedInstanceState.getParcelableArrayList("areaList");
+            mAreaList = (HashMap<String, Donate>) savedInstanceState.getSerializable("areaList");
         }
         View view =  inflater.inflate(R.layout.fragment_donate, container, false);
         SupportMapFragment mapFragment = (SupportMapFragment) getFragmentManager().findFragmentById(R.id.map);
@@ -116,43 +120,49 @@ public class DonateFragment extends Fragment implements OnMapReadyCallback {
         donateBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                mAreaList = fetchDataFromFirebase();
-                if(!checkDonatePlantPresent(mAreaList)) {
-                    DonateDialogFragment dialogFragment = new DonateDialogFragment();
-                    Bundle bundle = new Bundle();
-                    Log.e("Donate Dial Frag", String.valueOf(mAreaList.size()));
-                    bundle.putParcelableArrayList("areaList", mAreaList);
-                    dialogFragment.setArguments(bundle);
-                    FragmentTransaction ft = getFragmentManager().beginTransaction();
-                    ft.replace(R.id.donateFrameLayout, dialogFragment);
-                    ft.commit();
-                } else {
-                    Toast.makeText(getContext(), "Madurai Made Green, All Plants have been donated",
-                                    Toast.LENGTH_LONG).show();
-                }
+                //mAreaList = fetchDataFromFirebase();
+                displayDonateFrag();
+
             }
         });
 
         return view;
     }
 
-    public boolean checkDonatePlantPresent(ArrayList<Donate> areaList) {
-        boolean isFavPresent = false;
-        for(Donate area: areaList) {
-            if(area.getDonated() == "yes"){
-                isFavPresent = true;
-                return isFavPresent;
+    public void displayDonateFrag(){
+        if(checkDonatePlantPresent(mAreaList)) {
+            DonateDialogFragment dialogFragment = new DonateDialogFragment();
+            Bundle bundle = new Bundle();
+            Log.e("Donate Dial Frag", String.valueOf(mAreaList.size()));
+            bundle.putSerializable("areaList", mAreaList);
+            dialogFragment.setArguments(bundle);
+            FragmentTransaction ft = getFragmentManager().beginTransaction();
+            ft.addToBackStack(null).replace(R.id.donateFrameLayout, dialogFragment);
+            ft.commit();
+        } else {
+            Toast.makeText(getContext(), "Madurai Made Green, All Plants have been donated",
+                    Toast.LENGTH_LONG).show();
+        }
+    }
+
+    public boolean checkDonatePlantPresent(HashMap<String, Donate> areaList) {
+        Log.e("CheckDonate", String.valueOf(areaList.size()));
+        boolean donationRequired = false;
+        for(Map.Entry<String, Donate> area : areaList.entrySet()) {
+            Log.e("CheckDonate", area.getValue().getDonated());
+            if(area.getValue().getDonated().contains("no")){
+                Log.e("Check area Donate", area.getValue().getName());
+                return true;
             }
         }
-        return isFavPresent;
+        return donationRequired;
     }
 
     @Override
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
         if(savedInstanceState != null) {
-            mAreaList = savedInstanceState.getParcelableArrayList("areaList");
-
+            mAreaList = savedInstanceState.getParcelable("areaList");
         }
     }
 
@@ -160,7 +170,7 @@ public class DonateFragment extends Fragment implements OnMapReadyCallback {
     public void onSaveInstanceState(@NonNull Bundle outState) {
         super.onSaveInstanceState(outState);
         Log.e("DONATE FRAG", "SAVE INSTANCE area list size"+mAreaList.size());
-        outState.putParcelableArrayList("areaList", mAreaList);
+        outState.putSerializable("areaList", mAreaList);
     }
 
     // TODO: Rename method, update argument and hook method into UI event
@@ -223,8 +233,8 @@ public class DonateFragment extends Fragment implements OnMapReadyCallback {
         void onFragmentInteraction(Uri uri);
     }
 
-    public ArrayList<Donate> fetchDataFromFirebase() {
-        mAreaList = new ArrayList<>();
+    public HashMap<String, Donate> fetchDataFromFirebase() {
+        mAreaList = new HashMap<>();
         //final ArrayList<Donate> areaList = new ArrayList<>();
         FirebaseDatabase database = FirebaseDatabase.getInstance();
         DatabaseReference ref = database.getReference();
@@ -234,7 +244,7 @@ public class DonateFragment extends Fragment implements OnMapReadyCallback {
                 Log.e("Count", ""+dataSnapshot.getChildrenCount());
                 for(DataSnapshot postSnapshot: dataSnapshot.getChildren()) {
                     Donate areaDetails = postSnapshot.getValue(Donate.class);
-                    mAreaList.add(areaDetails);
+                    mAreaList.put(String.valueOf(areaDetails.getId()), areaDetails);
                     Log.e("Get Data", areaDetails.getName());
                 }
                 updateMap(mAreaList);
@@ -251,17 +261,17 @@ public class DonateFragment extends Fragment implements OnMapReadyCallback {
         return mAreaList;
     }
 
-    private void updateMap(ArrayList<Donate> areaList) {
-        for(Donate area : areaList) {
-            Log.e("Donate Fragment LAT", String.valueOf(area.getLat()));
-            Log.e("Donate Fragment LNG", String.valueOf(area.getLng()));
-            LatLng areaPosition = new LatLng(area.getLat(), area.getLng());
+    private void updateMap(HashMap<String, Donate> areaList) {
+        for(Map.Entry<String, Donate> area : areaList.entrySet()) {
+            Log.e("Donate Fragment LAT", String.valueOf(area.getValue().getLat()));
+            Log.e("Donate Fragment LNG", String.valueOf(area.getValue().getLng()));
+            LatLng areaPosition = new LatLng(area.getValue().getLat(), area.getValue().getLng());
             if(map != null) {
-                if (area.getDonated().equals("yes")) {
-                    map.addMarker(new MarkerOptions().position(areaPosition).title(area.getName()).
+                if (area.getValue().getDonated().equals("yes")) {
+                    map.addMarker(new MarkerOptions().position(areaPosition).title(area.getValue().getName()).
                             icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_GREEN)));
                 } else {
-                    map.addMarker(new MarkerOptions().position(areaPosition).title(area.getName()).
+                    map.addMarker(new MarkerOptions().position(areaPosition).title(area.getValue().getName()).
                             icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_ORANGE)));
                 }
             }

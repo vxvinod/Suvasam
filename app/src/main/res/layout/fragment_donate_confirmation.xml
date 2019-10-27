@@ -18,6 +18,8 @@
         android:layout_height="wrap_content"
         android:layout_margin="16dp"
         android:textStyle="bold"
+        android:textSize="18dp"
+        android:fontFamily="sans-serif"
         android:text="@string/confirm_screen_thanks_msg" />
 
     <LinearLayout
@@ -33,12 +35,22 @@
             android:orientation="vertical">
 
         </LinearLayout>
-        <Button
-            android:id="@+id/checkoutBtn"
+        <LinearLayout
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="@string/confirm_screen_checkout_msg" />
-
-
+            android:orientation="horizontal"
+            >
+            <Button
+                android:id="@+id/checkoutBtn"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/confirm_screen_checkout_msg" />
+            <Button
+                android:id="@+id/confirmCancel"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/cancel"
+                />
+        </LinearLayout>
     </LinearLayout>
 </LinearLayout>

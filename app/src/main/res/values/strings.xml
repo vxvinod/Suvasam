@@ -26,4 +26,6 @@
     <string name="awareness_sample_desc">hello</string>
     <string name="widget_title">Suvasam</string>
     <string name="widget_sample_data">Sample test</string>
+    <string name="cancel">Cancel</string>
+    <string name="reset">reset</string>
 </resources>
