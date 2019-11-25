@@ -61,6 +61,7 @@ public class DonateFragment extends Fragment implements OnMapReadyCallback {
     private String mParam1;
     private String mParam2;
     FloatingActionButton donateBtn;
+    FloatingActionButton resetBtn;
 
     private OnFragmentInteractionListener mListener;
 
@@ -103,11 +104,13 @@ public class DonateFragment extends Fragment implements OnMapReadyCallback {
         if(savedInstanceState == null) {
             mAreaList = fetchDataFromFirebase();
         } else {
+            Log.e("SCreen Rotated", "SvaedInstance not null");
             mAreaList = (HashMap<String, Donate>) savedInstanceState.getSerializable("areaList");
         }
         View view =  inflater.inflate(R.layout.fragment_donate, container, false);
         SupportMapFragment mapFragment = (SupportMapFragment) getFragmentManager().findFragmentById(R.id.map);
         donateBtn = view.findViewById(R.id.donateBtn);
+        resetBtn = view.findViewById(R.id.resetBtn);
         //if(mapFragment == null) {
             FragmentManager fm = getFragmentManager();
             FragmentTransaction ft = fm.beginTransaction();
@@ -121,8 +124,21 @@ public class DonateFragment extends Fragment implements OnMapReadyCallback {
             @Override
             public void onClick(View v) {
                 //mAreaList = fetchDataFromFirebase();
+                Log.e("Donate Dial Frag", String.valueOf(mAreaList.size()));
                 displayDonateFrag();
 
+            }
+        });
+
+        resetBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Toast.makeText(getContext(), "Area Reset", Toast.LENGTH_LONG).show();
+                FirebaseDatabase db = FirebaseDatabase.getInstance();
+                DatabaseReference ref = db.getReference();
+                for(HashMap.Entry<String, Donate> area : mAreaList.entrySet()) {
+                    ref.child("area").child(String.valueOf(area.getValue().getId())).child("donated").setValue("no");
+                }
             }
         });
 
@@ -130,6 +146,7 @@ public class DonateFragment extends Fragment implements OnMapReadyCallback {
     }
 
     public void displayDonateFrag(){
+        Log.e("Display Donate Frag", "Displayed");
         if(checkDonatePlantPresent(mAreaList)) {
             DonateDialogFragment dialogFragment = new DonateDialogFragment();
             Bundle bundle = new Bundle();
@@ -162,7 +179,7 @@ public class DonateFragment extends Fragment implements OnMapReadyCallback {
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
         if(savedInstanceState != null) {
-            mAreaList = savedInstanceState.getParcelable("areaList");
+//            mAreaList = savedInstanceState.getParcelable("areaList");
         }
     }
 
@@ -211,8 +228,9 @@ public class DonateFragment extends Fragment implements OnMapReadyCallback {
             map.moveCamera(CameraUpdateFactory.newLatLngBounds(bounds, width, height, padding));
 
             map.setMinZoomPreference(map.getCameraPosition().zoom);
-            Log.e("Inside MapOnReady", String.valueOf(mAreaList.size()));
+
             if(!mAreaList.isEmpty()) {
+                Log.e("Inside MapOnReady", String.valueOf(mAreaList.size()));
                 updateMap(mAreaList);
             }
 

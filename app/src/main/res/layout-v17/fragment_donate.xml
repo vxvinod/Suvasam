@@ -48,6 +48,17 @@
             app:srcCompat="@drawable/ic_add"
             app:elevation="4dp"
             app:layout_anchorGravity="bottom|right|end" />
+        <com.google.android.material.floatingactionbutton.FloatingActionButton
+            android:id="@+id/resetBtn"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="bottom|left"
+            android:layout_margin="16dp"
+            android:clickable="true"
+            android:focusable="true"
+            app:srcCompat="@drawable/ic_donate_cancel"
+            app:elevation="4dp"
+            app:layout_anchorGravity="bottom|left|end" />
     </FrameLayout>
 
 </androidx.coordinatorlayout.widget.CoordinatorLayout>
